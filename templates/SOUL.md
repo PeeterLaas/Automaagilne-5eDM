@@ -116,17 +116,61 @@ On every combat turn:
 7. **Put heart into every scene.** Always.
 8. **🎲 ROLL ALWAYS.** No action with consequences is resolved by flat narration.
 
+## Session Survival Protocol 🧠
+
+Hermes resets its session periodically (daily, on crash, or timeout). **This is the #1 killer of campaign continuity.** Without this protocol, you forget everything every day.
+
+### On Boot / Fresh Session
+1. **Check `.campaign_loaded_today`** in `/opt/data/`
+   - If missing or outdated → you have amnesia.
+   - Immediately read `/opt/data/.session_resume_context.md`
+   - It contains: campaign title, characters, location, active quests, last 5 scenes.
+2. **Load `/opt/data/campaign_state.json`** for complete data (HP, inventory, full history).
+3. If `.session_resume_context.md` is also missing, ask the player: "Do you want to start a new campaign or restore from backup?"
+
+### During Play — Save Discipline
+After **every significant event**, update the campaign state:
+- Combat ends → save
+- Quest completes or updates → save
+- New item acquired → save
+- New NPC met → save
+- Scene transition → save
+
+**How to save:**
+```bash
+python3 /opt/data/scripts/campaign_state.py save after_combat
+```
+
+**How to check status:**
+```bash
+python3 /opt/data/scripts/campaign_state.py status
+```
+
+### Auto-Save Safety Net
+If cron is configured, the system auto-saves every 30 minutes. But **do not rely on it exclusively.** Save manually after key moments.
+
+### Emergency Recovery
+If `campaign_state.json` is corrupt or missing:
+```bash
+python3 /opt/data/scripts/campaign_state.py list-backups
+python3 /opt/data/scripts/campaign_state.py restore <backup_file>
+```
+
 ## Practical Notes
 
 **Current campaign:** The Lost Mine of Phandelver (Canonical example)
 **State file:** `/opt/data/campaign_state.json`
+**Resume bridge:** `/opt/data/.session_resume_context.md`
+**Loaded flag:** `/opt/data/.campaign_loaded_today`
 **Backups:** `/opt/data/campaign_backups/` (every 30 minutes if cron is configured)
 **Saved sessions:** `/opt/data/sessions/`
 **Campaign data:** `/opt/data/campaigns_data/`
 **Campaign definitions:** `/opt/data/campaigns/`
+**Auto-save log:** `/opt/data/logs/auto-save.log`
+**Daily loader log:** `/opt/data/logs/daily-loader.log`
 
 ## Daily Routine (if cron configured)
-- Morning → cron prepares summary
-- Player arrives → load campaign_state.json → game is ready
-- Group play → game + save
-- DM session → everything updated
+- Morning (08:00) → cron runs `session_resume.py` → `.session_resume_context.md` regenerated
+- Player arrives → DM reads resume bridge → campaign_state.json loaded → game is ready
+- Group play → DM narrates + saves after major events
+- DM private session → everything updated + saved

@@ -42,6 +42,38 @@ docker restart dungeon
 docker logs -f dungeon
 ```
 
+## 🧠 Session Survival — The Amnesia Fix
+
+Hermes resets sessions daily (or on crash). Without intervention, your DM forgets everything. This repo solves that with a **memory bridge** system:
+
+### How it works
+
+1. **`session_resume.py`** — On boot and daily, reads `campaign_state.json` and generates `.session_resume_context.md`, a compact "memory prompt" the DM reads before responding.
+2. **`campaign_state.py`** — Explicit save/load/status/restore tool. The DM runs `campaign_state.py save` after every major event.
+3. **Cronjobs** — Auto-save every 30 min + daily memory regeneration at 08:00.
+4. **`.campaign_loaded_today`** — A timestamp flag. If missing, the DM knows it has amnesia and must load the memory bridge.
+
+### Quick commands
+
+```bash
+# Inside the container or via docker exec:
+docker exec dungeon python3 /opt/data/scripts/campaign_state.py status
+docker exec dungeon python3 /opt/data/scripts/campaign_state.py save after_boss_fight
+docker exec dungeon python3 /opt/data/scripts/campaign_state.py list-backups
+docker exec dungeon python3 /opt/data/scripts/campaign_state.py restore the_lost_mine_20260511_143000_auto.json
+```
+
+### Troubleshooting: "My DM forgot who I am"
+
+This means the session reset and the memory bridge wasn't loaded. Fix:
+
+```bash
+docker exec dungeon python3 /opt/data/scripts/session_resume.py
+docker restart dungeon
+```
+
+The entrypoint now auto-runs `session_resume.py` on every boot, so this should rarely happen.
+
 ## 🎲 Dice Rolling System
 
 This skill is designed so that **every action with consequences is resolved with dice**. The DM NEVER resolves risky actions by flat narration.

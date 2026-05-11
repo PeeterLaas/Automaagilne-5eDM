@@ -66,6 +66,14 @@ echo -e "${BLUE}📄 Copying templates...${NC}"
 # SOUL.md
 cp "$REPO_DIR/templates/SOUL.md" "$DATA_DIR/SOUL.md"
 
+# Persistence scripts
+cp "$REPO_DIR/scripts/session_resume.py" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/campaign_state.py" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/cron-auto-save.sh" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/cron-daily-loader.sh" "$DATA_DIR/scripts/"
+chmod +x "$DATA_DIR/scripts/"*.sh
+echo -e "${GREEN}   ✓ Persistence scripts (session_resume.py, campaign_state.py, cron jobs)${NC}"
+
 # Campaign files (example canonical campaign)
 if [ ! -f "$DATA_DIR/campaigns/the_lost_mine.json" ]; then
     cp "$REPO_DIR/templates/campaigns/the_lost_mine.json" "$DATA_DIR/campaigns/"

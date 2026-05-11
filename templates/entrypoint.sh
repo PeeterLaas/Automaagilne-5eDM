@@ -38,6 +38,12 @@ restore_if_needed "state.db"
 restore_if_needed "state.db-wal"
 restore_if_needed "state.db-shm"
 
+# ── Campaign Memory Bridge ───────────────────────────────────────────
+# Hermes resets sessions daily. Regenerate the memory bridge on boot
+# so the DM remembers the campaign immediately.
+echo "🧠 Regenerating campaign memory bridge..."
+python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session_resume.py failed (no campaign yet?)"
+
 while true; do
     echo "🚀 Starting gateway..."
     /opt/hermes/.venv/bin/hermes gateway run --replace --accept-hooks -v 2>&1
