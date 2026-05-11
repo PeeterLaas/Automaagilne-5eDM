@@ -121,6 +121,61 @@ docker exec dungeon python3 /opt/data/scripts/campaign_state.py list-backups
 docker exec dungeon python3 /opt/data/scripts/campaign_state.py restore the_lost_mine_20260511_143000_auto.json
 ```
 
+## ⚔️ Combat Tracker
+
+Combat is where context compression kills campaigns. You can't track HP, initiative, and conditions in ephemeral memory. Use the Combat Tracker.
+
+### Start combat
+
+```bash
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py init \
+  --party "Elara,Maya" \
+  --party-hp 11 --party-ac 15 \
+  --enemies "Goblin1:7:15,Goblin2:7:15,Boss:30:16:3"
+```
+
+Enemy format: `Name:HP:AC[:InitBonus]`
+
+### Combat loop
+
+```bash
+# Check whose turn it is
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py status
+
+# Apply damage
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
+
+# Heal ally
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py heal Elara 5
+
+# Add condition
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py condition Goblin2 add poisoned
+
+# Remove condition
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py condition Elara remove poisoned
+
+# Next turn
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py next
+
+# Add enemy mid-fight
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py add "Reinforcement" --hp 12 --ac 14
+
+# End combat (auto-archives to campaign_state.json)
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py end
+```
+
+### Status display
+
+```
+⚔️ Round 3 | Turn: Goblin2
+
+ ▶ Elara           HP:  8/11  [███████░░░]   | —
+   Maya            HP:  6/10  [██████░░░░]   | poisoned
+   Goblin2         HP:  2/7   [██░░░░░░░░]   | prone
+
+   🎯 Goblin2's turn! What do they do?
+```
+
 ## 🎲 Dice Engine — Roll For Everything
 
 The official dice engine: `roll.py`. Transparent, verifiable, and narratively exciting.

@@ -185,6 +185,95 @@ Roll constantly while exploring:
 - **Deciphering a code** (1d20 + INT (Investigation)) — Does it make sense?
 - **Noticing a secret door** (1d20 + WIS (Perception)) — Is the wall hollow?
 
+## ⚔️ COMBAT PROTOCOL
+
+Combat is the most complex part of D&D. **You CANNOT track it all in your head.** Hermes context compression will eat your HP totals. Use the Combat Tracker.
+
+### Before Combat Starts
+
+1. **Roll initiative for everyone** using `combat_tracker.py init`:
+```bash
+python3 /opt/data/scripts/combat_tracker.py init \
+  --party "Elara,Maya" \
+  --party-hp 11 --party-ac 15 \
+  --enemies "Goblin1:7:15,Goblin2:7:15,BossOrc:23:14:2"
+```
+Enemy format: `Name:HP:AC[:InitBonus]`
+
+2. **Show the initiative order** with `combat_tracker.py status`
+
+### During Combat — The Loop
+
+**On each turn:**
+1. Check whose turn it is: `combat_tracker.py status`
+2. Player declares action → resolve with dice rolls (roll.py)
+3. Apply damage: `combat_tracker.py damage <target> <amount>`
+4. Apply healing: `combat_tracker.py heal <target> <amount>`
+5. Apply conditions: `combat_tracker.py condition <target> add prone`
+6. Advance turn: `combat_tracker.py next`
+7. **Update resumen-rapido.md** after the round: `generate_resumen.py`
+
+**Example combat turn:**
+```
+⚔️ Elara's turn (Round 2)
+   Elara fires her longbow at Goblin1:
+   🎲 1d20+5 → 18 → HIT!
+   🎲 1d8+3 → 7 piercing damage
+   python3 /opt/data/scripts/combat_tracker.py damage Goblin1 7
+   💀 Goblin1 is slain!
+   python3 /opt/data/scripts/combat_tracker.py next
+   ➡️ Round 2 | Maya's turn!
+```
+
+### Combat Status Display
+
+Show the battlefield every round:
+```bash
+python3 /opt/data/scripts/combat_tracker.py status
+```
+
+Output:
+```
+⚔️ Round 3 | Turn: Goblin2
+
+ ▶ Elara           HP:  8/11  [███████░░░]   | —
+   Maya            HP:  6/10  [██████░░░░]   | poisoned
+   Goblin2         HP:  2/7   [██░░░░░░░░]   | prone
+
+   🎯 Goblin2's turn! What do they do?
+```
+
+### Conditions You Must Track
+
+| Condition | Effect |
+|-----------|--------|
+| **blinded** | Can't see, auto-fail sight checks, attackers have advantage |
+| **charmed** | Can't attack charmer, charmer has advantage on social checks |
+| **deafened** | Can't hear, auto-fail hearing checks |
+| **frightened** | Disadvantage on checks/attacks while source is visible, can't move closer |
+| **grappled** | Speed 0, ends if grappler is incapacitated or moved away |
+| **incapacitated** | Can't take actions or reactions |
+| **invisible** | Impossible to see without magic, advantage on attacks, attackers have disadvantage |
+| **paralyzed** | Incapacitated, can't move/speak, auto-fail STR/DEX saves, attacks within 5ft are crits |
+| **petrified** | Turned to stone, incapacitated, can't move/speak, resistant to all damage, immune to poison/disease |
+| **poisoned** | Disadvantage on attacks and ability checks |
+| **prone** | Disadvantage on attacks, melee attacks have advantage, ranged have disadvantage, standing costs half movement |
+| **restrained** | Speed 0, disadvantage on attacks and DEX saves, attackers have advantage |
+| **stunned** | Incapacitated, can't move, can speak only falteringly, auto-fail STR/DEX saves |
+| **unconscious** | Incapacitated, can't move/speak, drop what you're holding, prone, auto-fail STR/DEX saves, attacks within 5ft are crits |
+
+### After Combat
+
+```bash
+python3 /opt/data/scripts/combat_tracker.py end
+```
+
+This:
+1. Archives the combat log to campaign_state.json
+2. Updates session history
+3. Clears combat_state.json
+4. **You MUST then run generate_resumen.py to update the resumen**
+
 ### Mandatory Combat Rolls
 
 On every combat turn:

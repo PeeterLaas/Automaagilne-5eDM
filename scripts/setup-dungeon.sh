@@ -70,10 +70,13 @@ cp "$REPO_DIR/templates/SOUL.md" "$DATA_DIR/SOUL.md"
 cp "$REPO_DIR/scripts/session_resume.py" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/campaign_state.py" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/campaign_manager.py" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/generate_resumen.py" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/combat_tracker.py" "$DATA_DIR/scripts/"
+cp "$REPO_DIR/scripts/roll.py" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/cron-auto-save.sh" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/cron-daily-loader.sh" "$DATA_DIR/scripts/"
 chmod +x "$DATA_DIR/scripts/"*.sh
-echo -e "${GREEN}   ✓ Persistence scripts (session_resume.py, campaign_state.py, campaign_manager.py, cron jobs)${NC}"
+echo -e "${GREEN}   ✓ All scripts copied (session_resume, campaign_manager, combat_tracker, roll, cron jobs)${NC}"
 
 # Campaign files (example canonical campaign)
 if [ ! -f "$DATA_DIR/campaigns/the_lost_mine.json" ]; then
