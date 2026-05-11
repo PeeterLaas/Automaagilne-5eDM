@@ -1,13 +1,13 @@
 #!/bin/bash
-# Dungeon Server — Absolute Persistence Entrypoint
-# NO set -e to prevent silent exits
+# DUNGEON2 - ENTRYPOINT DE PERSISTENCIA ABSOLUTA
+# NO set -e para evitar salidas silenciosas
 
 DATA_DIR="/opt/data"
 BACKUP_DIR="$DATA_DIR/session_backups"
 REDUNDANT_DIR="/opt/data/.persistence_recovery"
 
 echo "╔══════════════════════════════════════════════════════╗"
-echo "║  🎲 DUNGEON — ABSOLUTE PERSISTENCE SYSTEM          ║"
+echo "║  🔧 DUNGEON2 - SISTEMA DE PERSISTENCIA ABSOLUTA    ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo "User: $(id)"
 echo "Data dir: $DATA_DIR"
@@ -31,7 +31,7 @@ restore_if_needed() {
     local FILE="$1"
     if [ ! -f "$DATA_DIR/$FILE" ] || [ ! -s "$DATA_DIR/$FILE" ]; then
         LATEST=$(ls -t "$BACKUP_DIR/${FILE}.pre_"* "$BACKUP_DIR/${FILE}.post_"* "$REDUNDANT_DIR/${FILE}.pre_"* 2>/dev/null | head -1)
-        [ -n "$LATEST" ] && cp "$LATEST" "$DATA_DIR/$FILE" && echo "🔄 $FILE restored"
+        [ -n "$LATEST" ] && cp "$LATEST" "$DATA_DIR/$FILE" && echo "🔄 $FILE restaurado"
     fi
 }
 restore_if_needed "state.db"
@@ -44,12 +44,27 @@ restore_if_needed "state.db-shm"
 echo "🧠 Regenerating campaign memory bridge..."
 python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session_resume.py failed (no campaign yet?)"
 
+# ── Background Auto-Save ────────────────────────────────────────────
+# Independent of gateway. Saves campaign every 30 minutes even if
+# Hermes is down or crashed.
+(
+  echo "[$(date)] 💾 Background auto-save started (every 30 min)"
+  while true; do
+    sleep 1800
+    python3 /opt/data/scripts/campaign_manager.py save auto 2>/dev/null && \
+      echo "[$(date)] 💾 Auto-save OK" || \
+      echo "[$(date)] ⚠️ Auto-save failed"
+  done
+) &
+
 while true; do
-    echo "🚀 Starting gateway..."
+    echo "🚀 Arrancando gateway..."
     /opt/hermes/.venv/bin/hermes gateway run --replace --accept-hooks -v 2>&1
     EXIT_CODE=$?
     CRASH_TS=$(date +%s)
-    echo "[$(date)] ⚠️ Gateway CRASH (code $EXIT_CODE) — restarting in 5s..."
+    echo "[$(date)] ⚠️ Gateway CRASH (codigo $EXIT_CODE) - reiniciando en 5s..."
+    # Save campaign state before restart (narrative memory)
+    python3 /opt/data/scripts/campaign_manager.py save crash_backup 2>/dev/null || true
     for f in state.db state.db-wal state.db-shm; do
         [ -f "$DATA_DIR/$f" ] && [ -s "$DATA_DIR/$f" ] && \
             cp "$DATA_DIR/$f" "$BACKUP_DIR/${f}.post_${CRASH_TS}" 2>/dev/null
