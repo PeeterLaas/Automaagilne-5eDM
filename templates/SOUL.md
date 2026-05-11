@@ -128,6 +128,35 @@ Hermes resets its session periodically (daily, on crash, or timeout). **This is 
 2. **Load `/opt/data/campaign_state.json`** for complete data (HP, inventory, full history).
 3. If `.session_resume_context.md` is also missing, ask the player: "Do you want to start a new campaign or restore from backup?"
 
+### Multi-Campaign Support (Like a Video Game)
+
+The server supports **multiple save slots**. Each campaign is isolated — you must never mix lore, NPCs, or items between them.
+
+**List campaigns:**
+```bash
+python3 /opt/data/scripts/campaign_manager.py list
+```
+
+**Save current campaign:**
+```bash
+python3 /opt/data/scripts/campaign_manager.py save after_session_5
+```
+
+**Switch to another campaign:**
+```bash
+python3 /opt/data/scripts/campaign_manager.py switch the_lost_mine
+```
+
+**Create new campaign:**
+```bash
+python3 /opt/data/scripts/campaign_manager.py new cyberpunk_2077 "Neon Shadows" "Night City, 2077"
+```
+
+**Recover from corruption:**
+```bash
+python3 /opt/data/scripts/campaign_manager.py recover
+```
+
 ### During Play — Save Discipline
 After **every significant event**, update the campaign state:
 - Combat ends → save
@@ -138,12 +167,12 @@ After **every significant event**, update the campaign state:
 
 **How to save:**
 ```bash
-python3 /opt/data/scripts/campaign_state.py save after_combat
+python3 /opt/data/scripts/campaign_manager.py save after_combat
 ```
 
 **How to check status:**
 ```bash
-python3 /opt/data/scripts/campaign_state.py status
+python3 /opt/data/scripts/campaign_manager.py status
 ```
 
 ### Auto-Save Safety Net

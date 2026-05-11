@@ -57,11 +57,35 @@ Hermes resets sessions daily (or on crash). Without intervention, your DM forget
 
 ```bash
 # Inside the container or via docker exec:
+
+# Campaign manager (multi-slot save system)
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py list
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py status
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py save after_boss_fight
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py switch other_campaign
+
+# Legacy single-campaign tools
 docker exec dungeon python3 /opt/data/scripts/campaign_state.py status
-docker exec dungeon python3 /opt/data/scripts/campaign_state.py save after_boss_fight
 docker exec dungeon python3 /opt/data/scripts/campaign_state.py list-backups
 docker exec dungeon python3 /opt/data/scripts/campaign_state.py restore the_lost_mine_20260511_143000_auto.json
 ```
+
+### Multi-Campaign: Like a Video Game
+
+Save multiple campaigns and switch between them:
+
+```bash
+# List all saved campaigns
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py list
+
+# Create a new campaign slot
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py new cyberpunk "Neon Shadows" "Night City"
+
+# Switch to another campaign (auto-saves current)
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py switch the_lost_mine
+```
+
+Each campaign is completely isolated. The DM will never mix Rowan's story with a cyberpunk runner.
 
 ### Troubleshooting: "My DM forgot who I am"
 
