@@ -1,0 +1,60 @@
+{
+  "campaign": {
+    "title": "The Lost Mine of Phandelver",
+    "tagline": "A classic adventure for heroes of levels 1-5",
+    "setting": "Sword Coast — Forgotten Realms. The small town of Phandalin, at the edge of the Sword Mountains.",
+    "game_master": "Dungeon Master",
+    "player": "Player",
+    "date_saved": "2026-05-11",
+    "session_number": 0,
+    "total_sessions": 0
+  },
+  "characters": [
+    {
+      "name": "Elara Windblue",
+      "player": "Pregenerated example",
+      "race": "Wood Elf",
+      "class_level": "Ranger 1",
+      "background": "Outlander",
+      "alignment": "Neutral Good",
+      "stats": {
+        "STR": 10,
+        "DEX": 16,
+        "CON": 12,
+        "INT": 10,
+        "WIS": 14,
+        "CHA": 12
+      },
+      "hp": {
+        "current": 11,
+        "max": 11
+      },
+      "ac": 15,
+      "proficiency_bonus": 2,
+      "skills": [
+        "Survival",
+        "Perception",
+        "Nature",
+        "Stealth",
+        "Acrobatics",
+        "Sleight of Hand"
+      ],
+      "equipment": [
+        "Leather armor",
+        "Two short swords",
+        "Longbow and 20 arrows",
+        "Explorer's pack",
+        "Hempen rope (50 ft)",
+        "Rations (5 days)",
+        "Waterskin",
+        "Silver dagger (memento from her mentor)"
+      ],
+      "background_story": "Elara grew up in the forests north of the Sword Coast. Her mentor, an old elven ranger named Thalor, disappeared while searching for the legendary Forge of Spells. Now Elara has arrived in Phandalin following Thalor's last clue.",
+      "personality": "Curious, cautious, loyal to friends. Prefers to observe before acting, but doesn't hesitate to protect the defenseless.",
+      "ideals": "Nature must be respected and protected.",
+      "bonds": "Find her mentor Thalor or discover what happened to him.",
+      "flaws": "Has difficulty trusting strangers, especially city-dwelling humans."
+    }
+  ],
+  "synopsis": "The players are adventurers hired to escort a supply wagon from Neverwinter to Phandalin. But the road is fraught with danger: goblins, bandits, and worse. In Phandalin they will discover that the lost mine of Phandelver has been found... and that dark forces desperately seek it."
+}

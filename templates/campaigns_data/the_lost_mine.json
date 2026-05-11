@@ -1,0 +1,206 @@
+{
+    "campaign": {
+        "title": "The Lost Mine of Phandelver",
+        "tagline": "A classic adventure for heroes of levels 1-5",
+        "setting": "Sword Coast — Forgotten Realms. The small town of Phandalin, at the edge of the Sword Mountains.",
+        "game_master": "Dungeon Master",
+        "player": "Player",
+        "date_saved": "2026-05-11",
+        "session_number": 0,
+        "total_sessions": 0
+    },
+    "characters": [
+        {
+            "name": "Elara Windblue",
+            "player": "Pregenerated example",
+            "race": "Wood Elf",
+            "class_level": "Ranger 1",
+            "background": "Outlander",
+            "alignment": "Neutral Good",
+            "stats": {
+                "STR": 10,
+                "DEX": 16,
+                "CON": 12,
+                "INT": 10,
+                "WIS": 14,
+                "CHA": 12
+            },
+            "hp": {
+                "current": 11,
+                "max": 11
+            },
+            "ac": 15,
+            "proficiency_bonus": 2,
+            "skills": [
+                "Survival",
+                "Perception",
+                "Nature",
+                "Stealth",
+                "Acrobatics",
+                "Sleight of Hand"
+            ],
+            "equipment": [
+                "Leather armor",
+                "Two short swords",
+                "Longbow and 20 arrows",
+                "Explorer's pack",
+                "Hempen rope (50 ft)",
+                "Rations (5 days)",
+                "Waterskin",
+                "Silver dagger (memento from her mentor)"
+            ],
+            "background_story": "Elara grew up in the forests north of the Sword Coast. Her mentor, an old elven ranger named Thalor, disappeared while searching for the legendary Forge of Spells. Now Elara has arrived in Phandalin following Thalor's last clue.",
+            "personality": "Curious, cautious, loyal to friends. Prefers to observe before acting, but doesn't hesitate to protect the defenseless.",
+            "ideals": "Nature must be respected and protected.",
+            "bonds": "Find her mentor Thalor or discover what happened to him.",
+            "flaws": "Has difficulty trusting strangers, especially city-dwelling humans."
+        }
+    ],
+    "session_log": [
+        {
+            "type": "scene",
+            "title": "The Road to Phandalin",
+            "content": "The adventurers have been hired by Gundren Rockseeker to escort a wagon of supplies. Gundren and his escort Sildar left ahead. Halfway there, the group finds dead horses on the trail..."
+        },
+        {
+            "type": "combat",
+            "title": "Goblin Ambush",
+            "content": "Four goblins leap from the brush. Two with short swords, two with bows. Initiative: Elara 18, Goblins 12."
+        },
+        {
+            "type": "discovery",
+            "title": "Cragmaw Hideout",
+            "content": "Following the goblin trail, the heroes discover a hidden cave among the rocks. From inside come grunts and the rattle of chains."
+        },
+        {
+            "type": "scene",
+            "title": "Arrival in Phandalin",
+            "content": "The town of Phandalin is small but welcoming. The Stonehill Inn, Barthen's Provisions, and Ander's tavern. Everyone speaks of the rediscovered mine... and of the ruffians of the Iron Circle.",
+            "npcs_introduced": [
+                "Toblen Stonehill (innkeeper)",
+                "Elmar Barthen (shopkeeper)",
+                "Daran Edermath (retired adventurer)",
+                "Qelline Alderleaf (halfling farmer)"
+            ]
+        }
+    ],
+    "locations": [
+        {
+            "name": "Phandalin",
+            "type": "town",
+            "description": "Small human settlement on the edge of the Sword Mountains. Founded after the last orc war. About 50 buildings surrounding a stone well plaza.",
+            "key_places": [
+                "Stonehill Inn — tavern and inn run by Toblen Stonehill",
+                "Barthen's Provisions — general store run by Elmar Barthen",
+                "Shrine of Luck — temple to Tymora tended by Sister Garaele",
+                "Townmaster's Hall — currently the residence of Iarno Albrek (unknown to townsfolk)",
+                "Alderleaf Farm — south of town, good source of rumors"
+            ],
+            "rumors": [
+                "The Rockseeker brothers went missing near the mine",
+                "A young green dragon has been seen flying east",
+                "The Cragmaw tribe performs rituals in the ruins of Tresendar Manor",
+                "Gundren Rockseeker found a map revealing the exact location of the mine"
+            ]
+        },
+        {
+            "name": "The Mine of Phandelver",
+            "type": "dungeon",
+            "description": "Ancient dwarven and gnomish mine, lost during the wars between clans over 500 years ago. Rich in magical minerals and, according to legend, the Forge of Spells — a magical workshop capable of creating powerful items.",
+            "levels": [
+                "Level 1 — Entrance and slave quarters",
+                "Level 2 — Workshops and miner dwellings",
+                "Level 3 — The Forge of Spells (guarded by a dwarven specter)"
+            ],
+            "occupants": [
+                "Goblins of the Cragmaw tribe",
+                "Klarg — bugbear chief of the goblins",
+                "Mormesk the Wraith — ancient dwarf protector of the Forge"
+            ]
+        },
+        {
+            "name": "Tresendar Manor",
+            "type": "ruins",
+            "description": "Ruins of an old human manor on a hill northeast of Phandalin. Now infested by the Cragmaw tribe and the Black Spider's agents.",
+            "key_areas": [
+                "Cellars — prison for captives and sacrifice altar",
+                "Basement — Iarno's laboratory and his spectral cat",
+                "Tower — crow nest and cultist watchpost"
+            ]
+        }
+    ],
+    "npcs": [
+        {
+            "name": "Gundren Rockseeker",
+            "role": "Patron and benefactor",
+            "race": "Dwarf",
+            "occupation": "Miner and merchant",
+            "personality": "Enthusiastic, stubborn, loyal to friends. Dreams of restoring the mine and his clan.",
+            "secret": "Knows the exact location of the mine thanks to a map inherited from his great-grandfather."
+        },
+        {
+            "name": "Sildar Hallwinter",
+            "role": "Escort and ally",
+            "race": "Human",
+            "occupation": "Soldier of the Lords' Alliance",
+            "personality": "Brave, courteous, a bit rigid. Fulfills his duty at all costs.",
+            "secret": "Searching for his missing companion, Iarno Albrek, who turns out to be Glasstaff."
+        },
+        {
+            "name": "Klarg",
+            "role": "Secondary villain",
+            "race": "Bugbear",
+            "occupation": "Chief of the Cragmaw tribe",
+            "personality": "Brutal, cunning, despises goblins but uses them as cannon fodder.",
+            "combat_stats": {
+                "hp": 27,
+                "ac": 16,
+                "attack": "Morningstar +4 (2d8+2 bludgeoning)",
+                "special": "Surprise Attack: +2d6 damage if it has advantage"
+            }
+        },
+        {
+            "name": "Iarno 'Glasstaff' Albrek",
+            "role": "Main villain (Act 1-2)",
+            "race": "Human",
+            "occupation": "Renegade wizard / leader of the Black Spider's agents",
+            "personality": "Arrogant, cowardly when cornered. Seeks power regardless of the cost.",
+            "spells": ["Magic Missile", "Shield", "Sleep", "Thunderwave", "Misty Step"],
+            "secret": "Was a member of the Lords' Alliance before turning renegade out of greed."
+        }
+    ],
+    "quests": [
+        {
+            "name": "The Missing Wagon",
+            "type": "main",
+            "giver": "Gundren Rockseeker",
+            "description": "Escort the supply wagon from Neverwinter to Phandalin. Gundren left ahead.",
+            "reward": "10 gp each + future share in the mine",
+            "status": "active"
+        },
+        {
+            "name": "Rescue Gundren",
+            "type": "main",
+            "giver": "Event",
+            "description": "Gundren has been captured by the Cragmaw goblins. Sildar is also a prisoner in the cave.",
+            "reward": "Map to the mine + gratitude of the Rockseeker clan",
+            "status": "pending"
+        },
+        {
+            "name": "The Troubles of Phandalin",
+            "type": "side",
+            "giver": "Various townsfolk",
+            "description": "Eliminate the ruffian threat, investigate Tresendar Manor, and discover who controls the Cragmaw tribe.",
+            "reward": "Reputation in town + valuable information",
+            "status": "pending"
+        },
+        {
+            "name": "The Forge of Spells",
+            "type": "main",
+            "giver": "Gundren Rockseeker (upon rescue)",
+            "description": "Find and secure the Forge of Spells inside the mine before dark forces use it to create evil items.",
+            "reward": "One magic item forged at the Forge for each hero",
+            "status": "pending"
+        }
+    ]
+}
