@@ -65,6 +65,9 @@ echo -e "${BLUE}📄 Copying templates...${NC}"
 
 # SOUL.md
 cp "$REPO_DIR/templates/SOUL.md" "$DATA_DIR/SOUL.md"
+cp "$REPO_DIR/templates/DM_RULES.md" "$DATA_DIR/DM_RULES.md"
+cp "$REPO_DIR/templates/SYSTEM_TOOLS.md" "$DATA_DIR/SYSTEM_TOOLS.md"
+cp "$REPO_DIR/templates/PREFILL.md" "$DATA_DIR/PREFILL.md"
 
 # Persistence scripts
 cp "$REPO_DIR/scripts/session_resume.py" "$DATA_DIR/scripts/"
@@ -76,7 +79,7 @@ cp "$REPO_DIR/scripts/roll.py" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/cron-auto-save.sh" "$DATA_DIR/scripts/"
 cp "$REPO_DIR/scripts/cron-daily-loader.sh" "$DATA_DIR/scripts/"
 chmod +x "$DATA_DIR/scripts/"*.sh
-echo -e "${GREEN}   ✓ All scripts copied (session_resume, campaign_manager, combat_tracker, roll, cron jobs)${NC}"
+echo -e "${GREEN}   ✓ All scripts and rules copied${NC}"
 
 # Campaign files (example canonical campaign)
 if [ ! -f "$DATA_DIR/campaigns/the_lost_mine.json" ]; then
