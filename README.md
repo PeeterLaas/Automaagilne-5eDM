@@ -70,6 +70,48 @@ docker exec dungeon python3 /opt/data/scripts/campaign_state.py list-backups
 docker exec dungeon python3 /opt/data/scripts/campaign_state.py restore the_lost_mine_20260511_143000_auto.json
 ```
 
+## 🎲 Dice Engine — Roll For Everything
+
+The official dice engine: `roll.py`. Transparent, verifiable, and narratively exciting.
+
+```bash
+# Basic roll
+python3 /opt/data/scripts/roll.py roll 1d20+5
+
+# Attack with advantage + damage
+python3 /opt/data/scripts/roll.py attack --bonus 5 --ac 14 --damage 1d8+3 --advantage
+
+# Saving throw
+python3 /opt/data/scripts/roll.py save --ability con --bonus 2 --dc 13
+
+# Skill check with disadvantage
+python3 /opt/data/scripts/roll.py skill --ability stealth --bonus 7 --dc 15 --disadvantage
+
+# Initiative for whole party
+python3 /opt/data/scripts/roll.py initiative --names "Elara,Maya,Goblin1" --bonus 3
+
+# NPC morale (will they flee?)
+python3 /opt/data/scripts/roll.py morale --threshold 7
+
+# NPC first reaction
+python3 /opt/data/scripts/roll.py reaction
+
+# Random loot
+python3 /opt/data/scripts/roll.py loot --dice 1d6 --table trinket
+```
+
+### Roll for EVERYTHING
+
+The DM must roll dice for:
+- **Combat** — attack, damage, initiative, saves (obvious)
+- **Social** — persuasion, deception, intimidation, performance, haggling, bribery
+- **Exploration** — foraging, tracking, navigation, spotting ambushes, secret doors
+- **Atmosphere** — weather, NPC mood, random encounters, torch duration, rumor accuracy
+- **Survival** — marching, holding breath, resisting disease/poison, camping
+- **Crafting** — potion brewing, forgery, cooking, instrument playing
+
+**Never narrate an outcome without a roll first.**
+
 ### Multi-Campaign: Like a Video Game
 
 Save multiple campaigns and switch between them:
