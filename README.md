@@ -42,6 +42,57 @@ docker restart dungeon
 docker logs -f dungeon
 ```
 
+## 🧠 Sistema Mínimo — One File to Rule Them All
+
+Your DM diagnosed the system and proposed a radical simplification. We implemented it.
+
+### The Problem
+- 6 different state files → guaranteed desynchronization
+- 367-line skill → gets truncated or ignored
+- 4 sources to read before responding → DM reads one, or none
+- Manual saves → forgotten after intense scenes
+
+### The Solution: 3 Files Only
+
+| File | Purpose | Size |
+|------|---------|------|
+| `resumen-rapido.md` | **DM's single source of truth** — reads this before EVERY response | <500 chars |
+| `DM_RULES.md` | 3 rules only: Lore, Memory, Style | <30 lines |
+| `campaign_state.json` | Technical backup (DM never reads directly) | machine |
+
+### `resumen-rapido.md` — The Bible
+
+Auto-generated from `campaign_state.json` every 60 seconds. Contains:
+- Campaign title + current location
+- Party HP
+- Active quests (compact)
+- Last scene summary
+- Next decision prompt
+- 3-rule reminder
+
+```bash
+docker exec dungeon cat /opt/data/resumen-rapido.md
+```
+
+### `DM_RULES.md` — 3 Rules
+
+```
+Rule 0: Lore — NO canon characters in scenes
+Rule 1: Memory — Read resumen-rapido.md BEFORE every response
+Rule 2: Style — Roll dice always, give emoji options, narrate cinematically
+```
+
+Everything else (SRD, combat, XP) → read from `references/` only when needed.
+
+### Auto-Update (No Manual Action Needed)
+
+Three background processes run independently:
+1. **Memory bridge** — regenerates `resumen-rapido.md` on boot
+2. **Resumen generator** — updates `resumen-rapido.md` every 60 seconds
+3. **Auto-save** — backs up `campaign_state.json` every 30 minutes + on crash
+
+The DM never needs to remember to save. It just happens.
+
 ## 🧠 Session Survival — The Amnesia Fix
 
 Hermes resets sessions daily (or on crash). Without intervention, your DM forgets everything. This repo solves that with a **memory bridge** system:

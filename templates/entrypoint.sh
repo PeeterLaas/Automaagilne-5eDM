@@ -57,6 +57,18 @@ python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session
   done
 ) &
 
+# ── Background Resumen Generator ────────────────────────────────────
+# Keeps resumen-rapido.md fresh automatically. Runs every 60 seconds.
+# The DM's single source of truth stays current without manual action.
+(
+  echo "[$(date)] 📝 Background resumen generator started (every 60s)"
+  while true; do
+    sleep 60
+    python3 /opt/data/scripts/generate_resumen.py >/dev/null 2>&1 && \
+      echo "[$(date)] 📝 Resumen updated" || \
+      true
+  done
+) &
 while true; do
     echo "🚀 Arrancando gateway..."
     /opt/hermes/.venv/bin/hermes gateway run --replace --accept-hooks -v 2>&1
