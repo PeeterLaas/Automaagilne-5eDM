@@ -69,6 +69,20 @@ python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session
       true
   done
 ) &
+
+# ── Background Session Cleaner ───────────────────────────────────────
+# Removes old Telegram sessions from state.db. The group chat should
+# NOT accumulate long-term memory. Long-term memory lives in campaign
+# files (campaign_state.json, resumen-rapido.md, campaigns_data/).
+(
+  echo "[$(date)] 🧹 Background session cleaner started (every 60 min)"
+  while true; do
+    sleep 3600
+    python3 /opt/data/scripts/session_cleaner.py 2>/dev/null && \
+      echo "[$(date)] 🧹 Sessions cleaned" || \
+      true
+  done
+) &
 while true; do
     echo "🚀 Arrancando gateway..."
     /opt/hermes/.venv/bin/hermes gateway run --replace --accept-hooks -v 2>&1
