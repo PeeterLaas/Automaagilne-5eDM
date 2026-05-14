@@ -275,7 +275,7 @@ delegation:
   max_spawn_depth: 1
   orchestrator_enabled: true
   subagent_auto_approve: false
-prefill_messages_file: ''
+prefill_messages_file: '/opt/data/PREFILL.json'
 goals:
   max_turns: 20
 skills:
