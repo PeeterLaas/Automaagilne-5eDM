@@ -296,9 +296,11 @@ def cmd_status(paths: dict):
 
 
 def cmd_save(paths: dict, label: str = "manual"):
-    data = _load_active(paths)
+    data = _load_active(paths, fallback=False)
     if not data:
         print("❌ No active campaign to save.")
+        print("   Create one first: campaign_manager.py new <id> '<title>' ['<setting>']")
+        print("   Or load an existing one: campaign_manager.py switch <id>")
         return False
 
     campaigns_dir = paths["campaigns_dir"]
