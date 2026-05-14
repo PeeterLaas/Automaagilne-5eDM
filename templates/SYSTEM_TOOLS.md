@@ -24,13 +24,13 @@ python3 /opt/data/scripts/roll.py save --ability dex --bonus 3 --dc 15
 python3 /opt/data/scripts/roll.py skill --ability stealth --bonus 7 --dc 15
 
 # Initiative for party
-python3 /opt/data/scripts/roll.py initiative --names "Rowan,Maya" --bonus 3
+python3 /opt/data/scripts/roll.py initiative --names "<personaje1>,<personaje2>" --bonus 3
 ```
 
 ## Combat Tracker (MANDATORY during fights)
 ```bash
 # Start combat (roll initiative automatically)
-python3 /opt/data/scripts/combat_tracker.py init --party "Rowan,Maya" --enemies "Goblin1:7:15"
+python3 /opt/data/scripts/combat_tracker.py init --party "<personaje1>,<personaje2>" --enemies "Goblin1:7:15"
 
 # Show battlefield
 python3 /opt/data/scripts/combat_tracker.py status
@@ -39,7 +39,7 @@ python3 /opt/data/scripts/combat_tracker.py status
 python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
 
 # Heal
-python3 /opt/data/scripts/combat_tracker.py heal Rowan 5
+python3 /opt/data/scripts/combat_tracker.py heal <personaje> 5
 
 # Add condition
 python3 /opt/data/scripts/combat_tracker.py condition Goblin1 add poisoned
