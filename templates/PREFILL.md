@@ -5,10 +5,12 @@ Antes de responder:
 2. Si hay combate: leer /opt/data/combat_state.json y usar combat_tracker.py
 3. Para tiradas: usar roll.py (nunca inventar números)
 4. Después de cada escena: ejecutar generate_resumen.py + campaign_manager.py save
+5. Si el jugador pide guardar/cargar/listar partidas: usar dungeon_chat.py
 
 Comandos rápidos:
 - Tirada: python3 /opt/data/scripts/roll.py roll 1d20+5
 - Ataque: python3 /opt/data/scripts/roll.py attack --bonus 5 --ac 14 --damage 1d8+3
 - Combate: python3 /opt/data/scripts/combat_tracker.py status
 - Guardar: python3 /opt/data/scripts/generate_resumen.py
+- Chat (guardar/cargar/listar): python3 /opt/data/scripts/dungeon_chat.py parse "mensaje"
 - Ayuda: cat /opt/data/SYSTEM_TOOLS.md

@@ -63,6 +63,19 @@ python3 /opt/data/scripts/campaign_manager.py save after_scene
 python3 /opt/data/scripts/campaign_manager.py status
 ```
 
+## Chat Commands (when player asks in group chat)
+When the player says things like "qué partidas hay", "guarda esta", "carga la de X":
+```bash
+# Parse natural language and execute the right command
+python3 /opt/data/scripts/dungeon_chat.py parse "mensaje del jugador"
+
+# Or call campaign_manager directly:
+python3 /opt/data/scripts/campaign_manager.py list
+python3 /opt/data/scripts/campaign_manager.py save
+python3 /opt/data/scripts/campaign_manager.py switch <campaign_id>
+python3 /opt/data/scripts/campaign_manager.py new <id> "<title>" "<setting>"
+```
+
 ## NPC Tools
 ```bash
 # Morale check (will they flee?)

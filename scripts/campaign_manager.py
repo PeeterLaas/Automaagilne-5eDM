@@ -24,6 +24,7 @@ import argparse
 import json
 import os
 import re
+import sqlite3
 import sys
 import traceback
 from datetime import datetime
@@ -93,6 +94,48 @@ def _prune(directory: Path, keep: int):
     )
     for old in files[keep:]:
         old.unlink(missing_ok=True)
+
+
+def _extract_chat_history(data_dir: Path) -> list:
+    """Extract recent Telegram messages from state.db for this session."""
+    db_path = data_dir / "state.db"
+    if not db_path.exists():
+        return []
+    try:
+        conn = sqlite3.connect(str(db_path))
+        cursor = conn.cursor()
+        # Get the most recent telegram session
+        cursor.execute(
+            """SELECT id FROM sessions
+               WHERE source = 'telegram'
+               ORDER BY started_at DESC LIMIT 1"""
+        )
+        row = cursor.fetchone()
+        if not row:
+            return []
+        session_id = row[0]
+        cursor.execute(
+            """SELECT role, content, timestamp
+               FROM messages
+               WHERE session_id = ?
+               ORDER BY timestamp""",
+            (session_id,),
+        )
+        messages = []
+        for role, content, ts in cursor.fetchall():
+            if not content:
+                continue
+            # Skip tool/system noise
+            if role in ("user", "assistant"):
+                messages.append({
+                    "role": role,
+                    "content": content[:500],  # Truncate very long messages
+                    "timestamp": ts,
+                })
+        conn.close()
+        return messages
+    except Exception:
+        return []
 
 
 def _backup(data: dict, label: str, campaign_id: str | None, paths: dict) -> Path:
@@ -269,6 +312,12 @@ def cmd_save(paths: dict, label: str = "manual"):
 
     data.setdefault("campaign", {})["date_saved"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+    # Save chat history from state.db
+    chat_history = _extract_chat_history(paths["data_dir"])
+    if chat_history:
+        data["chat_history"] = chat_history[-50:]  # Keep last 50 messages
+        print(f"   💬 Captured {len(chat_history)} chat messages (keeping last 50)")
+
     bp = _backup(data, label, active_id, paths)
     _atomic_write(campaigns_dir / f"{active_id}.json", data)
     _atomic_write(paths["campaign_file"], data)
@@ -366,6 +415,7 @@ def cmd_new(paths: dict, campaign_id: str, title: str, setting: str = ""):
         },
         "characters": [],
         "session_log": [],
+        "chat_history": [],
         "current_status": {
             "location": "To be determined",
             "party_status": "New campaign — awaiting start.",
@@ -415,6 +465,33 @@ USAGE = """📖 Campaign Manager — Usage:
 """
 
 
+def cmd_chat_history(paths: dict, campaign_id: str | None = None):
+    """Show saved chat history for a campaign."""
+    target_id = campaign_id or _get_active_id(paths)
+    if not target_id:
+        print("❌ No active campaign.")
+        return False
+
+    campaigns_dir = paths["campaigns_dir"]
+    target_path = campaigns_dir / f"{target_id}.json"
+    data = _read_json(target_path)
+    if not data:
+        print(f"❌ Campaign '{target_id}' not found.")
+        return False
+
+    history = data.get("chat_history", [])
+    if not history:
+        print(f"📭 No chat history saved for '{target_id}'.")
+        return True
+
+    print(f"💬 Chat history for [{target_id}] ({len(history)} messages):\n")
+    for msg in history[-20:]:  # Show last 20
+        role = "🧑" if msg["role"] == "user" else "🤖"
+        content = msg["content"][:120].replace("\n", " ")
+        print(f"{role} {content}...")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description="Campaign manager")
     parser.add_argument(
@@ -436,6 +513,8 @@ def main():
     new_p.add_argument("title", help="Campaign title")
     new_p.add_argument("setting", nargs="?", default="", help="Campaign setting")
     sub.add_parser("recover", help="Recover from corruption")
+    chat_p = sub.add_parser("chat-history", help="Show saved chat history")
+    chat_p.add_argument("campaign_id", nargs="?", default=None, help="Campaign ID (default: active)")
 
     args = parser.parse_args()
     paths = get_paths(args.data_dir)
@@ -456,6 +535,9 @@ def main():
             sys.exit(0 if ok else 1)
         elif args.action == "recover":
             ok = cmd_recover(paths)
+            sys.exit(0 if ok else 1)
+        elif args.action == "chat-history":
+            ok = cmd_chat_history(paths, args.campaign_id)
             sys.exit(0 if ok else 1)
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
