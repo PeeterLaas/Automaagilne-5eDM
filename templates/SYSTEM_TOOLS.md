@@ -7,9 +7,28 @@
 2. If in combat, read /opt/data/combat_state.json
 
 ## Dice Rolling (MANDATORY — NEVER make up numbers)
+
+### ALWAYS ask: "Do you roll with your physical dice, or do I roll with Python?"
+Santiago has his own dice. If he rolls physically, tell him the die + modifier, he reports the result. If he wants you to roll, use `roll.py` and show the result.
+
+### Use the RIGHT die for the situation
+| Die | When to use |
+|-----|-------------|
+| **d20** | Attacks, saving throws, skill checks, initiative — everything that determines success/failure |
+| **d4** | Dagger damage, minor cantrips (Ray of Frost), small effects |
+| **d6** | Short sword damage, Fire Bolt, light weapons, minor healing potions |
+| **d8** | Longsword damage, longbow, Healing Word, moderate effects |
+| **d10** | Maul/pike damage, heavy weapons, serious effects |
+| **d12** | Greataxe damage, warhammer, devastating effects |
+| **d100** | Loot tables, random encounters, madness, percentile effects |
+
 ```bash
-# Basic roll
+# Basic rolls — all die types
 python3 /opt/data/scripts/roll.py roll 1d20+5
+python3 /opt/data/scripts/roll.py roll 2d6+3
+python3 /opt/data/scripts/roll.py roll 1d8+2
+python3 /opt/data/scripts/roll.py roll 1d12+4
+python3 /opt/data/scripts/roll.py roll 1d100
 
 # Attack (auto-calculates hit/miss/damage/crits)
 python3 /opt/data/scripts/roll.py attack --bonus 5 --ac 14 --damage 1d8+3
