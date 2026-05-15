@@ -7,6 +7,7 @@ The DM calls this script when the player says things like:
   "Guarda esta partida"
   "Carga la de Harry Potter"
   "Nueva partida: El Mundo Perdido"
+  "Crear personaje: Rowan el Guerrero"
 
 Usage (called by DM):
     python3 /opt/data/scripts/dungeon_chat.py parse "mensaje del jugador"
@@ -15,9 +16,7 @@ Returns a single-line instruction that the DM should echo to the player.
 """
 
 import argparse
-import json
 import re
-import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -59,6 +58,20 @@ INTENTS = [
         r"crear partida[;:](?P<title>.+)",
         r"empezar (una )?nueva[;:](?P<title>.+)",
     ]),
+    ("create_char", [
+        r"crear personaje[;:](?P<name>.+)",
+        r"nuevo personaje[;:](?P<name>.+)",
+        r"crea(r)? (a )?(?P<name>.+)( el | la )?(?P<cls>\w+)",
+        r"create character[;:](?P<name>.+)",
+        r"new character[;:](?P<name>.+)",
+    ]),
+    ("list_chars", [
+        r"mis personajes",
+        r"lista(r)? (de )?personajes",
+        r"qu[eé] personajes( hay)?",
+        r"show characters",
+        r"list characters",
+    ]),
     ("chat_history", [
         r"historial( de chat)?",
         r"chat history",
@@ -92,17 +105,32 @@ def _run_manager(cmd: str) -> str:
         return f"❌ Error running campaign_manager: {e}"
 
 
-def _run_resumen() -> str:
+def _run_manager_args(args_list: list) -> str:
+    """Run campaign_manager.py with argument list."""
     try:
         result = subprocess.run(
-            ["python3", str(DEFAULT_DATA_DIR / "scripts/generate_resumen.py")],
+            ["python3", str(DEFAULT_DATA_DIR / "scripts/campaign_manager.py")] + args_list,
             capture_output=True,
             text=True,
             timeout=10,
         )
-        return result.stdout
-    except Exception:
-        return ""
+        return result.stdout + result.stderr
+    except Exception as e:
+        return f"❌ Error running campaign_manager: {e}"
+
+
+def _run_character(cmd: str) -> str:
+    """Run character_creator.py and return stdout."""
+    try:
+        result = subprocess.run(
+            ["python3", str(DEFAULT_DATA_DIR / "scripts/character_creator.py")] + cmd.split(),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        return result.stdout + result.stderr
+    except Exception as e:
+        return f"❌ Error running character_creator: {e}"
 
 
 def _slugify(text: str) -> str:
@@ -122,23 +150,20 @@ def _slugify(text: str) -> str:
 
 def _find_campaign_id(name_hint: str) -> str | None:
     """Fuzzy match a campaign name hint to an existing ID."""
-    campaigns_dir = DEFAULT_DATA_DIR / "campaigns_data"
+    campaigns_dir = DEFAULT_DATA_DIR / "campaigns"
     if not campaigns_dir.exists():
         return None
 
     hint = _slugify(name_hint)
-    candidates = [p.stem for p in campaigns_dir.glob("*.json")]
+    candidates = [d.name for d in campaigns_dir.iterdir() if d.is_dir()]
 
-    # Exact match
     if hint in candidates:
         return hint
 
-    # Substring match
     for c in candidates:
         if hint in c or c in hint:
             return c
 
-    # Word-by-word match
     hint_words = set(hint.split("_"))
     best = None
     best_score = 0
@@ -156,7 +181,6 @@ def handle_list() -> str:
     out = _run_manager("list")
     if "No saved campaigns" in out:
         return "📭 No hay partidas guardadas."
-    # Compact the output for chat
     lines = []
     for line in out.splitlines():
         if line.strip().startswith("["):
@@ -168,9 +192,8 @@ def handle_list() -> str:
 
 def handle_save() -> str:
     out = _run_manager("save chat_manual")
-    _run_resumen()
     if "Saved:" in out:
-        return "✅ Partida guardada con éxito (incluyendo historial de chat)."
+        return "✅ Partida guardada con éxito."
     return out
 
 
@@ -183,19 +206,32 @@ def handle_switch(name_hint: str) -> str:
     if not cid:
         return f"❌ No encontré una partida que coincida con '{name_hint}'. Usa 'list' para ver las disponibles."
     out = _run_manager(f"switch {cid}")
-    _run_resumen()
     if "Active campaign" in out:
-        return f"✅ Partida cargada: [{cid}]. El resumen se ha actualizado."
+        return f"✅ Partida cargada: [{cid}]."
     return out
 
 
 def handle_new(title_raw: str) -> str:
     title = title_raw.strip().strip('"').strip("'")
     cid = _slugify(title)
-    out = _run_manager(f'new {cid} "{title}"')
+    out = _run_manager_args(["new", cid, title])
     if "New campaign created" in out:
-        return f"✅ Nueva partida creada: [{cid}] — {title}. Usa 'switch {cid}' para activarla."
+        _run_manager_args(["switch", cid])
+        return f"✅ Nueva partida creada y activada: [{cid}] — {title}."
     return out
+
+
+def handle_create_char(name_raw: str) -> str:
+    name = name_raw.strip().strip('"').strip("'")
+    # Default to Human Fighter if no class specified in name
+    out = _run_character(f'create --name "{name}" --race Human --class Fighter --method roll')
+    if "Character created" in out:
+        return f"✅ Personaje creado: {name}. Usa 'show {name}' para ver la ficha completa."
+    return out
+
+
+def handle_list_chars() -> str:
+    return _run_character("list")
 
 
 def handle_chat_history() -> str:
@@ -221,10 +257,17 @@ def parse_command(text: str) -> str:
         if not title:
             return "❌ ¿Cómo se llama la nueva partida? Di algo como 'nueva partida: El Mundo Perdido'."
         return handle_new(title)
+    if intent == "create_char":
+        name = groups.get("name", "").strip()
+        if not name:
+            return "❌ ¿Cómo se llama el personaje? Di algo como 'crear personaje: Rowan el Guerrero'."
+        return handle_create_char(name)
+    if intent == "list_chars":
+        return handle_list_chars()
     if intent == "chat_history":
         return handle_chat_history()
 
-    return "🤷 No entendí el comando. Prueba: 'qué partidas hay', 'guarda esta', 'carga <nombre>', 'nueva partida: <título>'."
+    return "🤷 No entendí el comando. Prueba: 'qué partidas hay', 'guarda esta', 'carga <nombre>', 'nueva partida: <título>', 'crear personaje: <nombre>'."
 
 
 def main():

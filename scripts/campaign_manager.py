@@ -248,7 +248,7 @@ def main():
     switch_p.add_argument("campaign_id", help="Campaign ID to activate")
     new_p = sub.add_parser("new", help="Create blank campaign")
     new_p.add_argument("campaign_id", help="Campaign ID")
-    new_p.add_argument("title", help="Campaign title")
+    new_p.add_argument("title", nargs="+", help="Campaign title")
     sub.add_parser("recover", help="Recover from backup")
 
     args = parser.parse_args()
@@ -266,7 +266,8 @@ def main():
             ok = cmd_switch(args.campaign_id)
             sys.exit(0 if ok else 1)
         elif args.action == "new":
-            ok = cmd_new(args.campaign_id, args.title)
+            title = " ".join(args.title) if isinstance(args.title, list) else args.title
+            ok = cmd_new(args.campaign_id, title)
             sys.exit(0 if ok else 1)
         elif args.action == "recover":
             ok = cmd_recover()
