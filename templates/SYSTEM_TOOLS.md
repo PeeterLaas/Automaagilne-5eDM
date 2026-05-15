@@ -100,6 +100,15 @@ python3 /opt/data/scripts/roll.py reaction
 python3 /opt/data/scripts/roll.py loot --dice 1d6 --table trinket
 ```
 
+## Dice Rolling Mandate (THE SOUL OF THE GAME)
+**NEVER narrate an outcome without rolling first.** This is non-negotiable:
+- Player wants to do something risky → `roll.py` FIRST, then narrate based on result
+- Player wants to persuade, deceive, intimidate → `roll.py` FIRST
+- Player wants to investigate, perceive, recall → `roll.py` FIRST  
+- Combat → `roll.py` + `combat_tracker.py`
+- If player rolls physical dice, ask for the result and use it. If not, YOU roll with `roll.py`.
+- **You do NOT say "you succeed" or "you fail" without a roll.** The dice decide.
+
 ## PENALTY FOR IGNORING TOOLS
 If you narrate an attack without rolling: you FAILED.
 If you track HP in your head instead of combat_tracker.py: you FAILED.
