@@ -67,6 +67,14 @@ python3 /opt/data/scripts/campaign_manager.py status
 python3 /opt/data/scripts/campaign_manager.py list
 ```
 
+## Character Creation (DM-guided, not a command)
+Character creation is ROLEPLAY, not a form. Guide the player through:
+1. Race, class, background — player chooses narratively
+2. Roll stats together: `python3 /opt/data/scripts/roll.py 4d6kh3` (repeat 6 times)
+3. Calculate modifiers, HP (max hit die + CON mod), AC
+4. Write the sheet to `campaigns/<id>/characters/<name>.md`
+   - You can use `character_creator.py` as a backend helper, or write markdown directly.
+
 ## Chat Commands (when player asks in group chat)
 When the player says things like "qué partidas hay", "guarda esta", "carga la de X":
 ```bash

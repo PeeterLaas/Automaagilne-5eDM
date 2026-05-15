@@ -58,20 +58,7 @@ INTENTS = [
         r"crear partida[;:](?P<title>.+)",
         r"empezar (una )?nueva[;:](?P<title>.+)",
     ]),
-    ("create_char", [
-        r"crear personaje[;:](?P<name>.+)",
-        r"nuevo personaje[;:](?P<name>.+)",
-        r"crea(r)? (a )?(?P<name>.+)( el | la )?(?P<cls>\w+)",
-        r"create character[;:](?P<name>.+)",
-        r"new character[;:](?P<name>.+)",
-    ]),
-    ("list_chars", [
-        r"mis personajes",
-        r"lista(r)? (de )?personajes",
-        r"qu[eé] personajes( hay)?",
-        r"show characters",
-        r"list characters",
-    ]),
+
     ("chat_history", [
         r"historial( de chat)?",
         r"chat history",
@@ -117,20 +104,6 @@ def _run_manager_args(args_list: list) -> str:
         return result.stdout + result.stderr
     except Exception as e:
         return f"❌ Error running campaign_manager: {e}"
-
-
-def _run_character(cmd: str) -> str:
-    """Run character_creator.py and return stdout."""
-    try:
-        result = subprocess.run(
-            ["python3", str(DEFAULT_DATA_DIR / "scripts/character_creator.py")] + cmd.split(),
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        return result.stdout + result.stderr
-    except Exception as e:
-        return f"❌ Error running character_creator: {e}"
 
 
 def _slugify(text: str) -> str:
@@ -221,19 +194,6 @@ def handle_new(title_raw: str) -> str:
     return out
 
 
-def handle_create_char(name_raw: str) -> str:
-    name = name_raw.strip().strip('"').strip("'")
-    # Default to Human Fighter if no class specified in name
-    out = _run_character(f'create --name "{name}" --race Human --class Fighter --method roll')
-    if "Character created" in out:
-        return f"✅ Personaje creado: {name}. Usa 'show {name}' para ver la ficha completa."
-    return out
-
-
-def handle_list_chars() -> str:
-    return _run_character("list")
-
-
 def handle_chat_history() -> str:
     return _run_manager("chat-history")
 
@@ -257,17 +217,10 @@ def parse_command(text: str) -> str:
         if not title:
             return "❌ ¿Cómo se llama la nueva partida? Di algo como 'nueva partida: El Mundo Perdido'."
         return handle_new(title)
-    if intent == "create_char":
-        name = groups.get("name", "").strip()
-        if not name:
-            return "❌ ¿Cómo se llama el personaje? Di algo como 'crear personaje: Rowan el Guerrero'."
-        return handle_create_char(name)
-    if intent == "list_chars":
-        return handle_list_chars()
     if intent == "chat_history":
         return handle_chat_history()
 
-    return "🤷 No entendí el comando. Prueba: 'qué partidas hay', 'guarda esta', 'carga <nombre>', 'nueva partida: <título>', 'crear personaje: <nombre>'."
+    return "🤷 No entendí el comando. Prueba: 'qué partidas hay', 'guarda esta', 'carga <nombre>', 'nueva partida: <título>'. El personaje lo creamos juntos durante el juego, no por comando."
 
 
 def main():

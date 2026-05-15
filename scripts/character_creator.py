@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """
-Character Creator — Guided D&D 5e character creation with dice rolling.
+Character Creator — DM backend helper for writing character sheets.
 
-Usage:
+This is NOT a player-facing command. Character creation is a ROLEPLAY
+conversation between DM and player. The DM guides the player through
+race, class, background, and rolls stats together using roll.py.
+
+This script is a backend helper the DM can use AFTER the conversation
+to write the final character sheet to markdown.
+
+Usage (DM only, after roleplay):
     python3 /opt/data/scripts/character_creator.py create --name "Rowan" --race "Human" --class "Fighter" --method roll
-    python3 /opt/data/scripts/character_creator.py create --name "Maya" --race "Elf" --class "Wizard" --method standard
     python3 /opt/data/scripts/character_creator.py list --campaign <id>
     python3 /opt/data/scripts/character_creator.py show --campaign <id> --name "Rowan"
 
 Methods:
-    roll     → 4d6 drop lowest, 6 times (player rolls or DM rolls)
+    roll     → 4d6 drop lowest, 6 times (DM rolls for player during conversation)
     standard → 15, 14, 13, 12, 10, 8
     pointbuy → 27 points
 """
