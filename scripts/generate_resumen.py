@@ -73,7 +73,7 @@ def generate_resumen(data: dict) -> str:
         f"⬅️  {last_scene}",
         f"➡️  Próxima: (por determinar)",
         "",
-        "⚠️ REGLAS: 0)NO personajes originales HP en escenas 1)Leer este archivo y state.md ANTES de responder 2)Tiradas SOLO cuando hay riesgo real 3)Párrafos largos como novela, SIN viñetas ni emojis en la narrativa",
+        "⚠️ REGLAS: 0)NO personajes originales HP en escenas 1)Leer este archivo y state.md ANTES de responder 2)Tiradas SOLO cuando hay riesgo real 3)Párrafos largos como novela, SIN viñetas en la narrativa",
     ]
 
     return "\n".join(line for line in lines if line)
