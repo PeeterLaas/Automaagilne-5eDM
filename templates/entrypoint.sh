@@ -38,12 +38,6 @@ restore_if_needed "state.db"
 restore_if_needed "state.db-wal"
 restore_if_needed "state.db-shm"
 
-# ── Campaign Memory Bridge ───────────────────────────────────────────
-# Hermes resets sessions daily. Regenerate the memory bridge on boot
-# so the DM remembers the campaign immediately.
-echo "🧠 Regenerating campaign memory bridge..."
-python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session_resume.py failed (no campaign yet?)"
-
 # ── Background Auto-Save ────────────────────────────────────────────
 # Independent of gateway. Saves campaign every 30 minutes even if
 # Hermes is down or crashed.
@@ -54,19 +48,6 @@ python3 /opt/data/scripts/session_resume.py 2>/dev/null || echo "⚠️  session
     python3 /opt/data/scripts/campaign_manager.py save auto 2>/dev/null && \
       echo "[$(date)] 💾 Auto-save OK" || \
       echo "[$(date)] ⚠️ Auto-save failed"
-  done
-) &
-
-# ── Background Resumen Generator ────────────────────────────────────
-# Keeps resumen-rapido.md fresh automatically. Runs every 60 seconds.
-# The DM's single source of truth stays current without manual action.
-(
-  echo "[$(date)] 📝 Background resumen generator started (every 60s)"
-  while true; do
-    sleep 60
-    python3 /opt/data/scripts/generate_resumen.py >/dev/null 2>&1 && \
-      echo "[$(date)] 📝 Resumen updated" || \
-      true
   done
 ) &
 

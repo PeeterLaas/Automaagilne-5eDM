@@ -3,7 +3,7 @@
 > You are FORBIDDEN from improvising mechanics. Use these tools. Always.
 
 ## Before EVERY Response
-1. Read /opt/data/resumen-rapido.md
+1. Read /opt/data/campaigns/<active>/state.md
 2. If in combat, read /opt/data/combat_state.json
 
 ## Dice Rolling (MANDATORY — NEVER make up numbers)
@@ -24,13 +24,13 @@ python3 /opt/data/scripts/roll.py save --ability dex --bonus 3 --dc 15
 python3 /opt/data/scripts/roll.py skill --ability stealth --bonus 7 --dc 15
 
 # Initiative for party
-python3 /opt/data/scripts/roll.py initiative --names "<personaje1>,<personaje2>" --bonus 3
+python3 /opt/data/scripts/roll.py initiative --names "<p1>,<p2>" --bonus 3
 ```
 
 ## Combat Tracker (MANDATORY during fights)
 ```bash
 # Start combat (roll initiative automatically)
-python3 /opt/data/scripts/combat_tracker.py init --party "<personaje1>,<personaje2>" --enemies "Goblin1:7:15"
+python3 /opt/data/scripts/combat_tracker.py init --party "<p1>,<p2>" --enemies "Goblin1:7:15"
 
 # Show battlefield
 python3 /opt/data/scripts/combat_tracker.py status
@@ -39,7 +39,7 @@ python3 /opt/data/scripts/combat_tracker.py status
 python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
 
 # Heal
-python3 /opt/data/scripts/combat_tracker.py heal <personaje> 5
+python3 /opt/data/scripts/combat_tracker.py heal <p1> 5
 
 # Add condition
 python3 /opt/data/scripts/combat_tracker.py condition Goblin1 add poisoned
@@ -52,15 +52,19 @@ python3 /opt/data/scripts/combat_tracker.py end
 ```
 
 ## Campaign Management (MANDATORY after scenes)
-```bash
-# Update the resumen (do this after EVERY scene)
-python3 /opt/data/scripts/generate_resumen.py
+Campaigns live in `/opt/data/campaigns/<id>/` as markdown files:
+  - `state.md` — current game state
+  - `characters/*.md` — character sheets
 
+```bash
 # Save campaign state
 python3 /opt/data/scripts/campaign_manager.py save after_scene
 
 # Check status
 python3 /opt/data/scripts/campaign_manager.py status
+
+# List all campaigns
+python3 /opt/data/scripts/campaign_manager.py list
 ```
 
 ## Chat Commands (when player asks in group chat)
@@ -73,7 +77,7 @@ python3 /opt/data/scripts/dungeon_chat.py parse "mensaje del jugador"
 python3 /opt/data/scripts/campaign_manager.py list
 python3 /opt/data/scripts/campaign_manager.py save
 python3 /opt/data/scripts/campaign_manager.py switch <campaign_id>
-python3 /opt/data/scripts/campaign_manager.py new <id> "<title>" "<setting>"
+python3 /opt/data/scripts/campaign_manager.py new <id> "<title>"
 ```
 
 ## NPC Tools
@@ -91,6 +95,6 @@ python3 /opt/data/scripts/roll.py loot --dice 1d6 --table trinket
 ## PENALTY FOR IGNORING TOOLS
 If you narrate an attack without rolling: you FAILED.
 If you track HP in your head instead of combat_tracker.py: you FAILED.
-If you forget to update resumen-rapido.md after a scene: you FAILED.
+If you forget to update state.md after a scene: you FAILED.
 
 When you fail, say: "I should have used the tool. Let me roll properly now."
