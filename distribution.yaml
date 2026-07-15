@@ -1,0 +1,26 @@
+name: hermes-dnd-complete-server
+version: 1.0.0
+description: "Persistent D&D Dungeon Master powered by Hermes Agent. Dice rolling, combat tracking, campaign persistence, crash recovery, character creator, and multi-campaign support. Deploy your own AI Dungeon Master in 5 minutes."
+hermes_requires: ">=0.12.0"
+author: "Santiago Fernández"
+license: "MIT"
+homepage: "https://github.com/sanfernandezf/Hermes-DnD-complete-server"
+
+env_requires:
+  - name: DEEPSEEK_API_KEY
+    description: "Your LLM API key (DeepSeek, OpenAI, Anthropic, or OpenRouter)"
+    required: true
+  - name: TELEGRAM_BOT_TOKEN
+    description: "Telegram bot token (optional, for remote play via Telegram)"
+    required: false
+  - name: DISCORD_TOKEN
+    description: "Discord bot token (optional, for remote play via Discord)"
+    required: false
+
+entrypoints:
+  - name: chat
+    description: "Talk to your Dungeon Master"
+    command: chat
+  - name: roll
+    description: "Roll dice (e.g., 'roll 1d20+5')"
+    command: exec python3 /opt/data/scripts/roll.py
