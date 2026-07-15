@@ -1,170 +1,73 @@
-# 🎲 Hermes Dungeon Server
+<div align="center">
+  <img src="assets/dnd-banner.jpg" alt="Hermes Dungeon Server" width="100%">
+  
+  # 🎲 Hermes Dungeon Server
+  
+  ### *Your DM never sleeps. Your campaign never dies.*
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+  [![Hermes Agent](https://img.shields.io/badge/powered%20by-Hermes%20Agent-6B3FA0)](https://github.com/NousResearch/hermes-agent)
+  [![D&D 5e](https://img.shields.io/badge/D%26D-5e-ED1C24)](https://dnd.wizards.com)
+  
+  **A persistent, self-healing Dungeon Master powered by AI. Deploy your own D&D server in 5 minutes.**
+  
+</div>
 
-A persistent, self-healing D&D Dungeon Master powered by [Hermes Agent](https://github.com/NousResearch/hermes-agent) inside Docker.
+---
 
-> **"Your DM never sleeps. Your campaign never dies."**
+## 🏰 What Is This?
 
-## What is this?
+Hermes Dungeon Server transforms [Hermes Agent](https://github.com/NousResearch/hermes-agent) into a **dedicated, always-on D&D Dungeon Master** that runs inside a Docker container. It's like having a professional DM on call 24/7 — with memory, dice, combat tracking, and crash recovery built in.
 
-This is a **Skill + template set** that turns a Hermes Agent container into a dedicated D&D server with:
+Whether you're a solo player exploring the Sword Coast or a group venturing through a homebrew world, this server gives you a DM that:
+- **Never sleeps** — available whenever you want to play
+- **Never forgets** — remembers every roll, every choice, every conversation
+- **Never cheats** — every dice roll is transparent and verifiable
+- **Never crashes** — auto-recovery from failures in under 5 seconds
 
-- 🎲 **Mandatory dice rolling system** — every attack, skill check, and saving throw is resolved with transparent dice rolls
-- 🧠 **Persistent campaign state** — every roll, every choice, every death is remembered
-- 🛡️ **Crash recovery** — automatic backup and restore of SQLite state + sessions
-- 🎭 **Customizable DM personality** — edit `SOUL.md` to make your DM sarcastic, epic, or eldritch
-- 🔄 **Gateway watchdog** — if the AI gateway crashes, it auto-restarts in 5 seconds
-- 📜 **Canonical campaign included** — *The Lost Mine of Phandelver* ready to play
-- 📱 **Multiplayer** — play via CLI, Telegram, or Discord (configure as needed)
+## ✨ Features
 
-## Requirements
+| | Feature | Description |
+|---|---|---|
+| 🎲 | **Mandatory Dice** | Every action with consequences is resolved with transparent dice. No fudging. |
+| 🧠 | **Persistent Memory** | Campaign state survives restarts, crashes, and session resets. Your DM always remembers who you are. |
+| 🛡️ | **Self-Healing** | Gateway watchdog auto-restarts in seconds. State backups on every boot and crash. |
+| ⚔️ | **Combat Tracker** | Full initiative, HP, conditions, and turn management. No more "wait, whose turn was it?" |
+| 📜 | **Included Campaign** | *The Lost Mine of Phandelver* ready to play. Level 1-5, pregenerated character included. |
+| 🎭 | **Customizable DM** | Edit `SOUL.md` to make your DM sarcastic, epic, grimdark, or whatever you want. |
+| 📱 | **Multiplayer** | Play via CLI, Telegram, or Discord. Configure whatever platform you use. |
+| 💾 | **Auto-Backup** | Campaign saved every 30 minutes and on every crash. Never lose progress. |
+| 🎮 | **Multi-Campaign** | Run multiple campaigns and switch between them like save slots. |
 
-- Docker
-- `hermes-base:latest` image (you already have Hermes installed)
-- An LLM API key (DeepSeek, OpenAI, OpenRouter, etc.)
+## 🖼️ What It Looks Like
 
-## Quick Start
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><img src="assets/dice-critical.jpg" alt="Dice Rolling" width="400"><br><em>⬆ Transparent dice rolls for every action</em></td>
+      <td align="center"><img src="assets/party-dungeon.jpg" alt="Adventuring Party" width="400"><br><em>⬆ Your party, your story, your DM</em></td>
+    </tr>
+  </table>
+</div>
 
-```bash
-# 1. Clone this repo
-git clone https://github.com/YOUR_USERNAME/hermes-dungeon-skill.git
-cd hermes-dungeon-skill
-
-# 2. Run the wizard
-bash scripts/setup-dungeon.sh
-
-# 3. Add your API key
-nano ~/.hermes/dungeon_container/.env
-
-# 4. Restart to apply
-docker restart dungeon
-
-# 5. Watch your DM come alive
-docker logs -f dungeon
-```
-
-## 🧠 Sistema Mínimo — One File to Rule Them All
-
-Your DM diagnosed the system and proposed a radical simplification. We implemented it.
-
-### The Problem
-- 6 different state files → guaranteed desynchronization
-- 367-line skill → gets truncated or ignored
-- 4 sources to read before responding → DM reads one, or none
-- Manual saves → forgotten after intense scenes
-
-### The Solution: 3 Files Only
-
-| File | Purpose | Size |
-|------|---------|------|
-| `resumen-rapido.md` | **DM's single source of truth** — reads this before EVERY response | <500 chars |
-| `DM_RULES.md` | 3 rules only: Lore, Memory, Style | <30 lines |
-| `campaign_state.json` | Technical backup (DM never reads directly) | machine |
-
-### `resumen-rapido.md` — The Bible
-
-Auto-generated from `campaign_state.json` every 60 seconds. Contains:
-- Campaign title + current location
-- Party HP
-- Active quests (compact)
-- Last scene summary
-- Next decision prompt
-- 3-rule reminder
-
-```bash
-docker exec dungeon cat /opt/data/resumen-rapido.md
-```
-
-### `DM_RULES.md` — 3 Rules
+### Dice in Action
 
 ```
-Rule 0: Lore — NO canon characters in scenes
-Rule 1: Memory — Read resumen-rapido.md BEFORE every response
-Rule 2: Style — Roll dice always, give emoji options, narrate cinematically
+⚔️ Elara's longbow attack:
+   1d20 → [12] + DEX (+3) + Proficiency (+2) = 17
+   Goblin AC: 14
+   ✅ Hit!
+   Damage: 1d8 → [6] + DEX (+3) = 9 piercing
 ```
 
-Everything else (SRD, combat, XP) → read from `references/` only when needed.
-
-### Auto-Update (No Manual Action Needed)
-
-Three background processes run independently:
-1. **Memory bridge** — regenerates `resumen-rapido.md` on boot
-2. **Resumen generator** — updates `resumen-rapido.md` every 60 seconds
-3. **Auto-save** — backs up `campaign_state.json` every 30 minutes + on crash
-
-The DM never needs to remember to save. It just happens.
-
-## 🧠 Session Survival — The Amnesia Fix
-
-Hermes resets sessions daily (or on crash). Without intervention, your DM forgets everything. This repo solves that with a **memory bridge** system:
-
-### How it works
-
-1. **`session_resume.py`** — On boot and daily, reads `campaign_state.json` and generates `.session_resume_context.md`, a compact "memory prompt" the DM reads before responding.
-2. **`campaign_state.py`** — Explicit save/load/status/restore tool. The DM runs `campaign_state.py save` after every major event.
-3. **Cronjobs** — Auto-save every 30 min + daily memory regeneration at 08:00.
-4. **`.campaign_loaded_today`** — A timestamp flag. If missing, the DM knows it has amnesia and must load the memory bridge.
-
-### Quick commands
-
-```bash
-# Inside the container or via docker exec:
-
-# Campaign manager (multi-slot save system)
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py list
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py status
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py save after_boss_fight
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py switch other_campaign
-
-# Legacy single-campaign tools
-docker exec dungeon python3 /opt/data/scripts/campaign_state.py status
-docker exec dungeon python3 /opt/data/scripts/campaign_state.py list-backups
-docker exec dungeon python3 /opt/data/scripts/campaign_state.py restore the_lost_mine_20260511_143000_auto.json
+```
+🎲 Elara's Stealth check:
+   1d20 → [14] + DEX (+3) + Proficiency (+2) = 19
+   Guard's passive Perception: 13
+   ✅ SUCCESS! Elara slips through the shadows...
 ```
 
-## ⚔️ Combat Tracker
-
-Combat is where context compression kills campaigns. You can't track HP, initiative, and conditions in ephemeral memory. Use the Combat Tracker.
-
-### Start combat
-
-```bash
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py init \
-  --party "Elara,Maya" \
-  --party-hp 11 --party-ac 15 \
-  --enemies "Goblin1:7:15,Goblin2:7:15,Boss:30:16:3"
-```
-
-Enemy format: `Name:HP:AC[:InitBonus]`
-
-### Combat loop
-
-```bash
-# Check whose turn it is
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py status
-
-# Apply damage
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
-
-# Heal ally
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py heal Elara 5
-
-# Add condition
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py condition Goblin2 add poisoned
-
-# Remove condition
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py condition Elara remove poisoned
-
-# Next turn
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py next
-
-# Add enemy mid-fight
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py add "Reinforcement" --hp 12 --ac 14
-
-# End combat (auto-archives to campaign_state.json)
-docker exec dungeon python3 /opt/data/scripts/combat_tracker.py end
-```
-
-### Status display
+### Combat Tracker
 
 ```
 ⚔️ Round 3 | Turn: Goblin2
@@ -176,9 +79,55 @@ docker exec dungeon python3 /opt/data/scripts/combat_tracker.py end
    🎯 Goblin2's turn! What do they do?
 ```
 
-## 🎲 Dice Engine — Roll For Everything
+## 🚀 Quick Start (5 Minutes)
 
-The official dice engine: `roll.py`. Transparent, verifiable, and narratively exciting.
+### Prerequisites
+- [Docker](https://docker.com) installed and running
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) installed
+- An LLM API key (DeepSeek, OpenAI, OpenRouter, etc.)
+
+### Installation
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/sanfernandezf/hermes-dungeon-skill.git
+cd hermes-dungeon-skill
+
+# 2. Run the setup wizard
+bash scripts/setup-dungeon.sh
+
+# 3. Add your API key
+nano ~/.hermes/dungeon_container/.env
+
+# 4. Restart to apply
+docker restart dungeon
+
+# 5. Watch your DM come alive!
+docker logs -f dungeon
+```
+
+The setup wizard will:
+- 🏗️ Create the container with `--restart always`
+- 📁 Set up persistent volumes for campaign data
+- 🎭 Install the DM personality (SOUL.md)
+- ⚙️ Configure Hermes with RPG-optimized settings
+- 🔄 Enable auto-recovery and watchdog
+
+### First Game
+
+```bash
+# Start a new campaign
+docker exec dungeon python3 /opt/data/scripts/campaign_manager.py new fantasy "My First Campaign" "Phandalin"
+
+# Enter the game
+docker exec -it dungeon bash
+# Then talk to your DM:
+hermes chat
+```
+
+## 🎲 Dice System
+
+Every roll is resolved by `scripts/roll.py` — transparent, verifiable, and narratively exciting.
 
 ```bash
 # Basic roll
@@ -190,128 +139,100 @@ python3 /opt/data/scripts/roll.py attack --bonus 5 --ac 14 --damage 1d8+3 --adva
 # Saving throw
 python3 /opt/data/scripts/roll.py save --ability con --bonus 2 --dc 13
 
-# Skill check with disadvantage
-python3 /opt/data/scripts/roll.py skill --ability stealth --bonus 7 --dc 15 --disadvantage
-
 # Initiative for whole party
 python3 /opt/data/scripts/roll.py initiative --names "Elara,Maya,Goblin1" --bonus 3
-
-# NPC morale (will they flee?)
-python3 /opt/data/scripts/roll.py morale --threshold 7
-
-# NPC first reaction
-python3 /opt/data/scripts/roll.py reaction
-
-# Random loot
-python3 /opt/data/scripts/roll.py loot --dice 1d6 --table trinket
 ```
 
-### Roll for EVERYTHING
+| Die | Common Use |
+|-----|-----------|
+| d4 | Daggers, minor healing |
+| d6 | Light weapons, fire damage |
+| d8 | Medium weapons, major healing |
+| **d20** | **Attack, saves, skills, initiative** |
+| d100 | Encounter tables, madness |
 
-The DM must roll dice for:
-- **Combat** — attack, damage, initiative, saves (obvious)
-- **Social** — persuasion, deception, intimidation, performance, haggling, bribery
-- **Exploration** — foraging, tracking, navigation, spotting ambushes, secret doors
-- **Atmosphere** — weather, NPC mood, random encounters, torch duration, rumor accuracy
-- **Survival** — marching, holding breath, resisting disease/poison, camping
-- **Crafting** — potion brewing, forgery, cooking, instrument playing
+> **Natural 20** → Critical hit! 🎉 | **Natural 1** → Fumble! 💀
 
-**Never narrate an outcome without a roll first.**
+## 🧠 How Memory Works
 
-### Multi-Campaign: Like a Video Game
+The biggest challenge with AI D&D is that the DM **forgets everything** when the session resets. This repo solves it with a **memory bridge** system:
 
-Save multiple campaigns and switch between them:
-
-```bash
-# List all saved campaigns
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py list
-
-# Create a new campaign slot
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py new cyberpunk "Neon Shadows" "Night City"
-
-# Switch to another campaign (auto-saves current)
-docker exec dungeon python3 /opt/data/scripts/campaign_manager.py switch the_lost_mine
+```
+┌──────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│ You (player) │────▶│ Hermes Gateway   │────▶│ campaign_state  │
+│              │◀────│ (the DM)         │◀────│ .json (disk)    │
+└──────────────┘     └──────────────────┘     └─────────────────┘
+                            │                          │
+                            ▼                          ▼
+                     ┌──────────────────┐     ┌─────────────────┐
+                     │ resumen-rapido   │     │ session_backups │
+                     │ .md (<500 chars) │     │ (every 30 min)  │
+                     └──────────────────┘     └─────────────────┘
 ```
 
-Each campaign is completely isolated. The DM will never mix Rowan's story with a cyberpunk runner.
+1. **`campaign_state.json`** — the source of truth on disk
+2. **`resumen-rapido.md`** — compact summary the DM reads before every response
+3. **Auto-backup** — campaign saved every 30 minutes + on every crash
+4. **`DM_RULES.md`** — 3 rules the DM must follow: Lore, Memory, Style
 
-### Troubleshooting: "My DM forgot who I am"
-
-This means the session reset and the memory bridge wasn't loaded. Fix:
+### If Your DM Forgets Who You Are
 
 ```bash
 docker exec dungeon python3 /opt/data/scripts/session_resume.py
 docker restart dungeon
 ```
 
-The entrypoint now auto-runs `session_resume.py` on every boot, so this should rarely happen.
+## ⚔️ Combat Tracker
 
-## 🎲 Dice Rolling System
+Full-featured combat management. No more "wait, how much HP did that goblin have?"
 
-This skill is designed so that **every action with consequences is resolved with dice**. The DM NEVER resolves risky actions by flat narration.
+```bash
+# Start combat
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py init \
+  --party "Elara,Maya" \
+  --party-hp 11 --party-ac 15 \
+  --enemies "Goblin1:7:15,Goblin2:7:15,Boss:30:16:3"
 
-### Two Play Modes
+# Apply damage
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
 
-**1. Player Rolls (recommended)**
-If you have physical dice or a dice app:
-```
-🎲 Roll 1d20 + 5 (Dexterity + Proficiency)!
-   DC: 15
-   Stakes: Leap the chasm or fall on the rocks.
-```
+# Next turn
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py next
 
-**2. Automatic Python (if no dice available)**
-The DM rolls for you showing every step:
-```
-⚔️ Elara's longbow attack:
-   1d20 → [12] + DEX (+3) + Proficiency (+2) = 17
-   Goblin AC: 14
-   ✅ Hit!
-   Damage: 1d8 → [6] + DEX (+3) = 9 piercing
+# End combat (auto-archives)
+docker exec dungeon python3 /opt/data/scripts/combat_tracker.py end
 ```
 
-### D&D Dice We Use
+## 🎭 Customizing Your DM
 
-| Die | Common Use |
-|-----|-----------|
-| d4 | Daggers, minor healing |
-| d6 | Light weapons |
-| d8 | Medium weapons, healing |
-| d10 | War weapons |
-| d12 | Greataxes, barbarians |
-| **d20** | **Attack, saves, skills, initiative** |
-| d100 | Encounter tables |
+Edit `~/.hermes/dungeon_container/SOUL.md` — changes take effect immediately.
 
-- **Natural 20** → Critical! Double damage or spectacular success
-- **Natural 1** → Fumble! Dramatic failure with consequences
+```markdown
+# Example: Grimdark DM
+You are a weary, cynical DM who has seen a thousand adventurers die.
+Your world is dark, your traps are lethal, and your NPCs are morally gray.
+Describe wounds in visceral detail. Mercy is rare.
+```
 
-## 📜 Example Campaign: The Lost Mine of Phandelver
+Want a different tone? Try:
+- **Comedic** — fourth-wall-breaking, pun-filled narration
+- **Epic** — sweeping descriptions, dramatic pauses
+- **Minimalist** — "You see a door. What do you do?"
+- **Eldritch** — cosmic horror, sanity checks, incomprehensible entities
 
-We include the canonical introductory D&D campaign ready to play:
+## 📜 Included Campaign
 
-- **Setting:** Sword Coast, town of Phandalin
-- **Levels:** 1-5
-- **Plot:** Escort a wagon, rescue Gundren Rockseeker, discover the lost mine, face the Cragmaw goblins and the Black Spider
-- **Pregenerated character:** Elara Windblue, wood elf ranger level 1
-- **Villains:** Klarg (bugbear chieftain) and Iarno "Glasstaff" Albrek (renegade wizard)
+**The Lost Mine of Phandelver** — the classic D&D 5e introductory campaign:
 
-Campaign files are automatically copied to the data directory during installation.
+| | Detail |
+|---|---|
+| **Setting** | Sword Coast, town of Phandalin |
+| **Levels** | 1-5 |
+| **Plot** | Escort a wagon → rescue Gundren Rockseeker → discover the lost mine → face the Black Spider |
+| **Character** | Elara Windblue, wood elf ranger level 1 |
+| **Villains** | Klarg (bugbear chieftain) & Iarno "Glasstaff" Albrek (renegade wizard) |
 
-## What's Included
-
-| File | Purpose |
-|------|---------|
-| `SKILL.md` | Hermes Agent skill definition |
-| `scripts/setup-dungeon.sh` | One-command setup wizard |
-| `templates/SOUL.md` | DM personality with dice rolling emphasis |
-| `templates/config.yaml` | Hermes config tuned for RPGs |
-| `templates/entrypoint.sh` | Persistence + watchdog entrypoint |
-| `templates/.env.example` | Environment variables template |
-| `templates/campaigns/the_lost_mine.json` | Canonical campaign definition |
-| `templates/campaigns_data/the_lost_mine.json` | Full campaign data |
-| `templates/campaign_state.json` | Clean initial state |
-
-## How It Works
+## 🔧 Architecture
 
 ```
 ┌─────────────────┐
@@ -343,89 +264,63 @@ Campaign files are automatically copied to the data directory during installatio
 └──────────────────────────────┘
 ```
 
-## Customizing Your DM
+## 📦 What's Included
 
-Edit `~/.hermes/dungeon_container/SOUL.md` — changes take effect immediately without restart.
-
-Example tweaks:
-- Change tone from "cinematic" to "grimdark" or "comedic"
-- Add house rules
-- Define your setting (Forgotten Realms, homebrew, etc.)
-- Change rolling style (always visible? result only?)
-
-## Campaign State
-
-The DM treats `campaign_state.json` as the **source of truth**. It tracks:
-- Active campaign name
-- Player characters (HP, inventory, stats)
-- NPCs met
-- Quest progress
-- World state
-
-The entrypoint backs this up every time the gateway starts or crashes.
-
-## Backups
-
-Backups live in two places inside the container:
-- `/opt/data/session_backups/` — standard backups
-- `/opt/data/.persistence_recovery/` — redundant copy
-
-On the host, these are at:
-- `~/.hermes/dungeon_container/session_backups/`
-- `~/.hermes/dungeon_container/.persistence_recovery/`
-
-## Multi-Player Setup
-
-### Telegram Group
-1. Create a bot with [@BotFather](https://t.me/botfather)
-2. Add token to `.env`
-3. Enable in `config.yaml`:
-   ```yaml
-   telegram:
-     enabled: true
-   ```
-4. Restart container
-
-### Discord Server
-1. Create a Discord app + bot
-2. Enable in `config.yaml`:
-   ```yaml
-   discord:
-     require_mention: false
-     auto_thread: true
-   ```
-3. Set token via `DISCORD_TOKEN` in `.env`
-4. Restart container
-
-## Troubleshooting
-
-**Container keeps crashing?**
-```bash
-docker logs --tail 50 dungeon
 ```
-Usually: missing API key or invalid model name.
-
-**State got corrupted?**
-The entrypoint auto-restores from latest backup. Manual restore:
-```bash
-cp ~/.hermes/dungeon_container/session_backups/state.db.post_1234567890 \
-   ~/.hermes/dungeon_container/state.db
-docker restart dungeon
+hermes-dungeon-skill/
+├── SKILL.md                 # Hermes Agent skill definition
+├── README.md                # This file
+├── LICENSE                  # MIT license
+├── assets/                  # Images for README
+│   ├── dnd-banner.jpg
+│   ├── dice-critical.jpg
+│   └── party-dungeon.jpg
+├── scripts/
+│   ├── setup-dungeon.sh     # One-command setup wizard
+│   ├── roll.py              # Dice engine (d4-d100)
+│   ├── combat_tracker.py    # Combat management
+│   ├── campaign_manager.py  # Multi-campaign save system
+│   ├── character_creator.py # Character creation wizard
+│   ├── dungeon_chat.py      # Chat interface
+│   ├── generate_resumen.py  # Memory bridge generator
+│   ├── session_cleaner.py   # Session maintenance
+│   ├── session_resume.py    # Session recovery
+│   ├── cron-auto-save.sh    # Auto-save cron template
+│   └── cron-daily-loader.sh # Daily memory refresh
+├── templates/
+│   ├── SOUL.md              # DM personality template
+│   ├── config.yaml          # RPG-optimized Hermes config
+│   ├── entrypoint.sh        # Watchdog + recovery entrypoint
+│   ├── .env.example         # Environment variables template
+│   ├── DM_RULES.md          # 3 core DM rules
+│   ├── campaigns/           # Campaign definitions
+│   └── campaigns_data/      # Campaign data files
+└── PLAN.md                  # Development roadmap
 ```
 
-**Want a second campaign?**
-Run the wizard again with a different name:
-```bash
-bash scripts/setup-dungeon.sh
-# → Name: dungeon2
-```
+## 🤝 Contributing
 
-## Credits
+This is an open-source project. Contributions welcome!
 
-Inspired by the original `dungeon2` container — a love letter to persistent AI-driven tabletop RPGs.
+- 🐛 **Found a bug?** Open an issue
+- 💡 **Have an idea?** Start a discussion
+- 🔧 **Want to contribute?** Fork and submit a PR
+- 🎲 **Created a campaign?** Share it with the community!
 
-Canonical campaign "The Lost Mine of Phandelver" adapted from the official D&D 5e module.
+## ❤️ Why This Exists
 
-## License
+AI is changing tabletop RPGs. This project proves that you can have a **genuinely good D&D experience** with an AI Dungeon Master — not a chatbot that pretends to roll dice, but a real DM with memory, consistency, rules, and dramatic tension.
 
-MIT — see [LICENSE](LICENSE).
+The best part? It costs **$0 in inference fees** when running locally with Ollama, or pennies per session with a cheap API. No subscriptions. No pay-per-game. Just you, your party, and an AI that respects the dice.
+
+---
+
+<div align="center">
+
+**Built with ❤️ for the D&D community**  
+*[Hermes Agent](https://github.com/NousResearch/hermes-agent) • [D&D 5e SRD](https://dnd.wizards.com/resources/systems-reference-document)*
+
+⭐ Star this repo if you want AI D&D to become a thing!  
+🐛 Found an issue? [Open a ticket](https://github.com/sanfernandezf/hermes-dungeon-skill/issues)
+
+</div>
