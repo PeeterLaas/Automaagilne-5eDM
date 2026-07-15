@@ -79,19 +79,41 @@ Whether you're a solo player exploring the Sword Coast or a group venturing thro
    🎯 Goblin2's turn! What do they do?
 ```
 
-## 🚀 Quick Start (5 Minutes)
+## 🚀 Quick Start (1 Command — Hermes Profile Distribution)
 
 ### Prerequisites
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) installed (v0.12+)
+- An LLM API key (DeepSeek, OpenAI, Anthropic, OpenRouter, etc.)
 - [Docker](https://docker.com) installed and running
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) installed
-- An LLM API key (DeepSeek, OpenAI, OpenRouter, etc.)
 
 ### Installation
 
 ```bash
+# 1. Install the D&D server as a Hermes profile (one command)
+hermes profile install github.com/sanfernandezf/Hermes-DnD-complete-server --alias dnd-dm
+
+# 2. Add your API key
+nano ~/.hermes/profiles/dnd-dm/.env
+
+# 3. Launch your Dungeon Master!
+dnd-dm chat
+```
+
+> This is an official [Hermes Profile Distribution](https://hermes-agent.nousresearch.com/docs/user-guide/profile-distributions) — the DM comes with personality, skills, config, and scripts pre-bundled. When updates are released, just run `hermes profile update dnd-dm`.
+
+The installer will:
+- 🎭 Set up the DM personality (SOUL.md) and rules
+- 📁 Bundle all scripts (dice, combat, campaigns, characters)
+- ⚙️ Configure Hermes with RPG-optimized settings
+- 🔄 Enable auto-recovery and campaign persistence
+- 🧠 Preserve your memories and sessions across updates
+
+### Alternative: Docker (manual setup)
+
+```bash
 # 1. Clone this repo
-git clone https://github.com/sanfernandezf/hermes-dungeon-skill.git
-cd hermes-dungeon-skill
+git clone https://github.com/sanfernandezf/Hermes-DnD-complete-server.git
+cd Hermes-DnD-complete-server
 
 # 2. Run the setup wizard
 bash scripts/setup-dungeon.sh
@@ -105,13 +127,6 @@ docker restart dungeon
 # 5. Watch your DM come alive!
 docker logs -f dungeon
 ```
-
-The setup wizard will:
-- 🏗️ Create the container with `--restart always`
-- 📁 Set up persistent volumes for campaign data
-- 🎭 Install the DM personality (SOUL.md)
-- ⚙️ Configure Hermes with RPG-optimized settings
-- 🔄 Enable auto-recovery and watchdog
 
 ### First Game
 
