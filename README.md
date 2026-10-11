@@ -90,7 +90,8 @@ pi                                             # or: claude / gemini / codex / o
 ```
 
 Works with **free OpenRouter models** and **local Ollama models** through [Pi](https://pi.dev).
-See **[docs/PLAYING.md](docs/PLAYING.md)** for setup, free-tier limits and model tips.
+See **[docs/PLAYING.md](docs/PLAYING.md)** for setup, free-tier limits and model tips
+(Estonian student quick-start: [docs/ALUSTAMINE.md](docs/ALUSTAMINE.md)).
 
 ## 🚀 Quick Start (1 Command — Hermes Profile Distribution)
 
