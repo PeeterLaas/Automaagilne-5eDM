@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Battle Map</title>
+<style>
+  :root {
+    --bg: #15120f; --panel: #1f1a15; --line: #3a3128; --text: #eadfcc; --muted: #a39580;
+    --gold: #e8b64c; --pc: #4f9be8; --enemy: #d9534f; --npc: #d9a03f; --ok: #5cb85c;
+    --parchment: #d8c8a4; --ink: rgba(60, 40, 20, .35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+    padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  header h1 { margin: 0; font: 600 20px/1.2 Georgia, "Times New Roman", serif; letter-spacing: .02em; }
+  header .round { color: var(--gold); font-weight: 600; }
+  header .hint { color: var(--muted); margin-left: auto; font-size: 12px; }
+  main { display: flex; gap: 16px; padding: 12px 16px; align-items: flex-start; }
+  #stage { flex: 1; min-width: 0; display: flex; justify-content: center; }
+  #board { position: relative; width: 100%; user-select: none; border-radius: 4px;
+    box-shadow: 0 6px 30px rgba(0,0,0,.6); background: var(--parchment); }
+  #board img.map { display: block; width: 100%; height: 100%; object-fit: fill; border-radius: 4px; }
+  #grid { position: absolute; cursor: crosshair; }
+  #grid.lines { background-image:
+      linear-gradient(to right, var(--gl) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--gl) 1px, transparent 1px); }
+  #labels { position: absolute; inset: 0; display: grid; pointer-events: none; }
+  #labels span { font-size: 9px; color: rgba(255,255,255,.75); text-shadow: 0 0 2px #000;
+    padding: 1px 2px; overflow: hidden; }
+  .blank #labels span { color: rgba(60,40,20,.55); text-shadow: none; }
+  .token { position: absolute; transition: left .35s ease, top .35s ease; container-type: size; }
+  .disc { position: absolute; left: 50%; top: 50%; width: 86cqmin; height: 86cqmin;
+    transform: translate(-50%, -50%); border-radius: 50%; border: 3px solid var(--c);
+    background: var(--c) center/cover no-repeat; box-shadow: 0 2px 6px rgba(0,0,0,.7);
+    display: grid; place-items: center; color: #fff; font-weight: 700;
+    font-size: 36cqmin; text-shadow: 0 1px 2px #000; cursor: pointer; }
+  .token.pc { --c: var(--pc); } .token.enemy { --c: var(--enemy); } .token.npc { --c: var(--npc); }
+  .token.current .disc { border-color: var(--gold); animation: pulse 1.4s ease-in-out infinite; }
+  .token.selected .disc { outline: 3px dashed #fff; outline-offset: 2px; }
+  .token.dead .disc, .token.unconscious .disc { filter: grayscale(1) brightness(.6); }
+  .token.dead .disc::after { content: ""; position: absolute; inset: 12%;
+    background: linear-gradient(45deg, transparent 44%, var(--enemy) 44% 56%, transparent 56%),
+                linear-gradient(-45deg, transparent 44%, var(--enemy) 44% 56%, transparent 56%); }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 4px rgba(232,182,76,.55), 0 2px 6px rgba(0,0,0,.7); } }
+  .hpbar { position: absolute; left: 12%; right: 12%; bottom: 0; height: 5px; border-radius: 3px;
+    background: rgba(0,0,0,.7); overflow: hidden; }
+  .hpbar i { display: block; height: 100%; background: var(--ok); }
+  .conds { position: absolute; top: -2px; right: -2px; display: flex; gap: 1px; }
+  .conds b { font-size: max(8px, 18cqmin); background: #6b3fa0; color: #fff; border-radius: 3px; padding: 0 3px;
+    box-shadow: 0 1px 2px #000; }
+  .tag { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 1px); white-space: nowrap;
+    font-size: max(9px, 22cqmin); background: rgba(0,0,0,.75); color: #fff; padding: 0 4px; border-radius: 3px;
+    pointer-events: none; }
+  #tip { position: fixed; pointer-events: none; background: rgba(0,0,0,.85); color: #fff;
+    padding: 3px 7px; border-radius: 4px; font-size: 12px; z-index: 10; }
+  aside { width: 300px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+  section h2 { margin: 0 0 8px; font: 600 13px/1 system-ui, sans-serif; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted); }
+  ol.order { list-style: none; margin: 0; padding: 0; }
+  ol.order li { display: grid; grid-template-columns: 22px 1fr auto; gap: 6px; align-items: center;
+    padding: 4px 6px; border-radius: 4px; border-left: 3px solid var(--c); }
+  ol.order li.pc { --c: var(--pc); } ol.order li.enemy { --c: var(--enemy); } ol.order li.npc { --c: var(--npc); }
+  ol.order li.current { background: rgba(232,182,76,.15); }
+  ol.order li.dead { opacity: .45; text-decoration: line-through; }
+  ol.order .init { color: var(--muted); font-variant-numeric: tabular-nums; }
+  ol.order .hp { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+  ol.order .sub { grid-column: 2 / 4; font-size: 11px; color: var(--muted); }
+  .log { margin: 0; padding-left: 16px; color: var(--muted); font-size: 12px; }
+  label.row { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+  .calib { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 12px; }
+  .calib input { width: 100%; background: #0f0d0b; color: var(--text); border: 1px solid var(--line);
+    border-radius: 4px; padding: 3px 5px; }
+  button { background: #2c251e; color: var(--text); border: 1px solid var(--line); border-radius: 4px;
+    padding: 5px 9px; cursor: pointer; font: inherit; }
+  button:hover { border-color: var(--gold); }
+  code.cmd { display: block; margin-top: 8px; padding: 6px; background: #0f0d0b; border-radius: 4px;
+    font-size: 11px; word-break: break-all; color: var(--gold); }
+  .empty { color: var(--muted); font-style: italic; }
+  [hidden] { display: none !important; }
+  @media (max-width: 900px) { main { flex-direction: column; } aside { width: 100%; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚔️ Battle Map</h1>
+  <span class="round" id="round"></span>
+  <span id="turn"></span>
+  <span class="hint">Click a token, then hover to measure · 1 square = 5 ft</span>
+</header>
+<main>
+  <div id="stage"><div id="board"><div id="grid"><div id="labels"></div></div></div></div>
+  <aside>
+    <section><h2>Initiative</h2><ol class="order" id="order"></ol></section>
+    <section id="benchSec" hidden><h2>Not on the map</h2><div id="bench"></div></section>
+    <section><h2>Log</h2><ol class="log" id="log"></ol></section>
+    <section>
+      <h2>View</h2>
+      <label class="row"><input type="checkbox" id="optGrid" checked> Show grid lines</label>
+      <label class="row"><input type="checkbox" id="optCoords"> Show coordinates</label>
+      <label class="row"><input type="checkbox" id="optNames" checked> Show names</label>
+      <label class="row"><input type="checkbox" id="optDM"> DM view (enemy HP &amp; AC)</label>
+      <button id="calibBtn">Calibrate grid…</button>
+      <div id="calibBox" hidden>
+        <p style="font-size:12px;color:var(--muted);margin:8px 0">
+          Count the squares on the map and enter them, then use <b>Pick corners</b>: click the
+          top-left corner of the first square, then the bottom-right corner of the last one.
+        </p>
+        <div class="calib">
+          <label>Cols<input type="number" id="cCols" min="1"></label>
+          <label>Rows<input type="number" id="cRows" min="1"></label>
+          <span></span>
+          <label>Left %<input type="number" id="cL" step="0.1" min="0"></label>
+          <label>Top %<input type="number" id="cT" step="0.1" min="0"></label>
+          <span></span>
+          <label>Right %<input type="number" id="cR" step="0.1" min="0"></label>
+          <label>Bottom %<input type="number" id="cB" step="0.1" min="0"></label>
+        </div>
+        <p style="margin:8px 0 0"><button id="pickBtn">Pick corners</button> <button id="calibDone">Done</button></p>
+        <code class="cmd" id="calibCmd"></code>
+      </div>
+    </section>
+  </aside>
+</main>
+<div id="tip" hidden></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const board = $("board"), grid = $("grid"), labels = $("labels"), tip = $("tip");
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("bm." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem("bm." + k, JSON.stringify(v)); } catch {} },
+  };
+  const opts = { grid: store.get("grid", true), coords: store.get("coords", false), names: store.get("names", true), dm: store.get("dm", false) };
+  const optIds = [["optGrid", "grid"], ["optCoords", "coords"], ["optNames", "names"], ["optDM", "dm"]];
+  for (const [id, key] of optIds) $(id).checked = opts[key];
+  for (const [id, key] of optIds) {
+    $(id).onchange = e => { opts[key] = e.target.checked; store.set(key, opts[key]); draw(); };
+  }
+
+  let data = null, lastJson = "", selected = null, calib = null, picking = null, mapImg = null;
+
+  const colName = c => { let s = "", n = c + 1; while (n) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); } return s; };
+  const cellName = (c, r) => colName(c) + (r + 1);
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const abbr = name => name.replace(/[^A-Za-z0-9 ]/g, "").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase()
+    + (name.match(/\d+$/) || [""])[0];
+
+  function gridCfg() { return calib || data.map; }
+
+  function layoutBoard() {
+    const g = gridCfg();
+    const img = data.map.image;
+    board.classList.toggle("blank", !img);
+    if (img && (!mapImg || mapImg.dataset.src !== img)) {
+      if (mapImg) mapImg.remove();
+      mapImg = new Image();
+      mapImg.className = "map"; mapImg.dataset.src = img; mapImg.src = img; mapImg.alt = "";
+      mapImg.onload = () => sizeBoard();
+      mapImg.onerror = () => { mapImg.alt = "Map image not found: " + img; };
+      board.prepend(mapImg);
+    } else if (!img && mapImg) { mapImg.remove(); mapImg = null; }
+
+    const [l, t, r, b] = g.inset || [0, 0, 0, 0];
+    Object.assign(grid.style, { left: l * 100 + "%", top: t * 100 + "%", right: r * 100 + "%", bottom: b * 100 + "%" });
+    grid.className = opts.grid || calib ? "lines" : "";
+    grid.style.setProperty("--gl", img ? "rgba(255,255,255,.28)" : "var(--ink)");
+    grid.style.backgroundSize = `calc(100% / ${g.cols}) calc(100% / ${g.rows})`;
+    sizeBoard();
+  }
+
+  function sizeBoard() {
+    const g = gridCfg();
+    const ratio = mapImg && mapImg.naturalWidth ? mapImg.naturalWidth / mapImg.naturalHeight : g.cols / g.rows;
+    board.style.aspectRatio = ratio;
+    board.style.maxWidth = `calc((100vh - 90px) * ${ratio})`;
+  }
+
+  function drawLabels() {
+    const g = gridCfg();
+    labels.style.gridTemplateColumns = `repeat(${g.cols}, 1fr)`;
+    labels.style.gridTemplateRows = `repeat(${g.rows}, 1fr)`;
+    if (!opts.coords) { labels.innerHTML = ""; return; }
+    let html = "";
+    for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++) html += `<span>${cellName(c, r)}</span>`;
+    labels.innerHTML = html;
+  }
+
+  function hpText(c) {
+    if (c.type === "enemy" && !opts.dm) return "";
+    return `${c.hp}/${c.hp_max}` + (opts.dm || c.type !== "enemy" ? ` · AC ${c.ac}` : "");
+  }
+
+  function drawTokens() {
+    const g = gridCfg();
+    grid.querySelectorAll(".token").forEach(el => el.remove());
+    for (const c of data.combatants) {
+      if (!c.pos) continue;
+      const el = document.createElement("div");
+      el.className = `token ${c.type} ${c.status}` + (c.current ? " current" : "") + (selected === c.name ? " selected" : "");
+      Object.assign(el.style, {
+        left: c.pos.col / g.cols * 100 + "%", top: c.pos.row / g.rows * 100 + "%",
+        width: c.size / g.cols * 100 + "%", height: c.size / g.rows * 100 + "%",
+      });
+      const pct = c.hp_max ? Math.max(0, Math.min(100, c.hp / c.hp_max * 100)) : 0;
+      const hpColor = pct > 50 ? "var(--ok)" : pct > 25 ? "var(--npc)" : "var(--enemy)";
+      el.innerHTML =
+        `<div class="disc" style="${c.token ? `background-image:url('${esc(c.token)}')` : ""}">${c.token ? "" : esc(abbr(c.name))}</div>` +
+        `<div class="hpbar"><i style="width:${pct}%;background:${hpColor}"></i></div>` +
+        (c.conditions.length ? `<div class="conds">${c.conditions.map(x => `<b title="${esc(x)}">${esc(x.slice(0, 3))}</b>`).join("")}</div>` : "") +
+        (opts.names ? `<div class="tag">${esc(c.name)}</div>` : "");
+      el.title = `${c.name} (${c.pos.cell})` + (hpText(c) ? ` — HP ${hpText(c)}` : "") + (c.conditions.length ? ` — ${c.conditions.join(", ")}` : "");
+      el.querySelector(".disc").onclick = ev => { ev.stopPropagation(); selected = selected === c.name ? null : c.name; drawTokens(); };
+      grid.appendChild(el);
+    }
+  }
+
+  function drawSidebar() {
+    $("round").textContent = data.active ? `Round ${data.round}` : (data.combatants.length ? "Combat ended" : "No combat");
+    const cur = data.combatants.find(c => c.current);
+    $("turn").textContent = cur ? `▶ ${cur.name}'s turn` : "";
+    $("order").innerHTML = data.combatants.length ? data.combatants.map(c => `
+      <li class="${c.type} ${c.status}${c.current ? " current" : ""}">
+        <span class="init">${c.initiative ?? ""}</span><span>${esc(c.name)}</span><span class="hp">${esc(hpText(c))}</span>
+        <span class="sub">${c.pos ? c.pos.cell : "—"}${c.conditions.length ? " · " + esc(c.conditions.join(", ")) : ""}${c.status !== "alive" ? " · " + c.status : ""}</span>
+      </li>`).join("") : `<li class="empty">Waiting for combat_tracker.py init…</li>`;
+    const bench = data.combatants.filter(c => !c.pos && c.status !== "dead");
+    $("benchSec").hidden = !bench.length;
+    $("bench").textContent = bench.map(c => c.name).join(", ");
+    $("log").innerHTML = data.log.map(l => `<li>${esc(l)}</li>`).join("");
+  }
+
+  function draw() {
+    if (!data) return;
+    layoutBoard(); drawLabels(); drawTokens(); drawSidebar(); updateCalibCmd();
+  }
+
+  // ── Hover: coordinates and distance ──
+  function cellAt(ev) {
+    const g = gridCfg(), r = grid.getBoundingClientRect();
+    const c = Math.floor((ev.clientX - r.left) / r.width * g.cols), w = Math.floor((ev.clientY - r.top) / r.height * g.rows);
+    return c >= 0 && w >= 0 && c < g.cols && w < g.rows ? [c, w] : null;
+  }
+  grid.addEventListener("mousemove", ev => {
+    const cell = cellAt(ev);
+    if (!cell || picking) { tip.hidden = true; return; }
+    let text = cellName(...cell);
+    const s = selected && data.combatants.find(c => c.name === selected && c.pos);
+    if (s) text += ` · ${Math.max(Math.abs(cell[0] - s.pos.col), Math.abs(cell[1] - s.pos.row)) * 5} ft from ${s.name}`;
+    tip.textContent = text; tip.hidden = false;
+    tip.style.left = ev.clientX + 14 + "px"; tip.style.top = ev.clientY + 14 + "px";
+  });
+  grid.addEventListener("mouseleave", () => { tip.hidden = true; });
+  grid.addEventListener("click", () => { if (!picking && selected) { selected = null; drawTokens(); } });
+
+  // ── Grid calibration ──
+  const cIn = { cols: $("cCols"), rows: $("cRows"), l: $("cL"), t: $("cT"), r: $("cR"), b: $("cB") };
+  function openCalib() {
+    const m = data.map;
+    calib = { cols: m.cols, rows: m.rows, inset: [...(m.inset || [0, 0, 0, 0])] };
+    syncCalibInputs(); $("calibBox").hidden = false; draw();
+  }
+  function syncCalibInputs() {
+    cIn.cols.value = calib.cols; cIn.rows.value = calib.rows;
+    ["l", "t", "r", "b"].forEach((k, i) => { cIn[k].value = +(calib.inset[i] * 100).toFixed(2); });
+  }
+  function readCalibInputs() {
+    calib.cols = Math.max(1, +cIn.cols.value || 1); calib.rows = Math.max(1, +cIn.rows.value || 1);
+    calib.inset = ["l", "t", "r", "b"].map(k => Math.max(0, Math.min(49, +cIn[k].value || 0)) / 100);
+    draw();
+  }
+  Object.values(cIn).forEach(i => i.addEventListener("input", readCalibInputs));
+  function updateCalibCmd() {
+    if (!calib) return;
+    const ins = calib.inset.map(v => +v.toFixed(4)).join(",");
+    $("calibCmd").textContent = `python3 ../scripts/combat_tracker.py map ${data.map.image ? `--image "${data.map.image}" ` : ""}--grid ${calib.cols}x${calib.rows} --inset ${ins}`;
+  }
+  $("calibBtn").onclick = () => calib ? closeCalib() : openCalib();
+  $("calibDone").onclick = () => closeCalib();
+  function closeCalib() { calib = null; picking = null; $("calibBox").hidden = true; board.style.cursor = ""; draw(); }
+  $("pickBtn").onclick = () => { picking = []; board.style.cursor = "crosshair"; $("pickBtn").textContent = "Click top-left…"; };
+  board.addEventListener("click", ev => {
+    if (!picking) return;
+    ev.stopPropagation();
+    const r = board.getBoundingClientRect();
+    picking.push([(ev.clientX - r.left) / r.width, (ev.clientY - r.top) / r.height]);
+    if (picking.length === 1) { $("pickBtn").textContent = "Click bottom-right…"; return; }
+    const [[x1, y1], [x2, y2]] = picking;
+    calib.inset = [Math.min(x1, x2), Math.min(y1, y2), 1 - Math.max(x1, x2), 1 - Math.max(y1, y2)];
+    picking = null; board.style.cursor = ""; $("pickBtn").textContent = "Pick corners";
+    syncCalibInputs(); draw();
+  }, true);
+  $("calibCmd").onclick = () => { navigator.clipboard?.writeText($("calibCmd").textContent).catch(() => {}); };
+
+  // ── Live updates: re-read battle_map.js (works from file://) ──
+  function poll() {
+    const s = document.createElement("script");
+    s.src = "battle_map.js?t=" + Date.now();
+    s.onload = s.onerror = () => {
+      s.remove();
+      const json = JSON.stringify(window.__BATTLE__ || null);
+      if (window.__BATTLE__ && json !== lastJson) { lastJson = json; data = window.__BATTLE__; draw(); }
+      setTimeout(poll, 1000);
+    };
+    document.head.appendChild(s);
+  }
+  window.addEventListener("resize", sizeBoard);
+  poll();
+})();
+</script>
+</body>
+</html>

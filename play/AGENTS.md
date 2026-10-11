@@ -42,7 +42,24 @@ python3 ../scripts/combat_tracker.py condition Goblin1 add poisoned
 python3 ../scripts/combat_tracker.py next
 python3 ../scripts/combat_tracker.py end
 ```
-Enemy format is `Name:HP:AC[:InitBonus]`.
+Enemy format is `Name:HP:AC[:InitBonus[:Size]][@Cell]`.
+
+### Battle map — `battle_map.html`
+The players may have `battle_map.html` open in a browser. It redraws itself from the combat tracker,
+so placing and moving tokens costs no extra tool calls beyond the commands you already run.
+```bash
+# Place everyone when combat starts (size: tiny/small/medium/large/huge/gargantuan)
+python3 ../scripts/combat_tracker.py init --party "Ana@C3,Rowan@C4" --party-hp 11 --enemies "Goblin1:7:15:2@H6,Ogre:59:11:-1:large@J8"
+python3 ../scripts/combat_tracker.py move Ana D5 Goblin1 G6     # several moves in one call; prints distance
+python3 ../scripts/combat_tracker.py map --image assets/maps/cave.jpg   # pick a map (ls assets/maps)
+python3 ../scripts/combat_tracker.py map --none --grid 20x15    # blank grid
+python3 ../scripts/battle_map.py open                            # open the map for the players
+```
+- A1 is the top-left square, with columns as letters and rows as numbers. 1 square = 5 ft, and
+  diagonals also count as 5 ft. Respect speed: 30 ft is 6 squares.
+- If you can view images, look at the map image once at the start of a fight to learn the walls
+  and terrain. Otherwise, keep positions plausible and describe the space in words.
+- Any `@Cell` is optional. Without a map, the game works exactly as before.
 
 ### Campaigns — `../scripts/campaign_manager.py`
 ```bash

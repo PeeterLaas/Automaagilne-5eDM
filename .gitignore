@@ -40,3 +40,8 @@ play/resumen-rapido.md
 
 # Python
 __pycache__/
+
+# Battle map: generated page/data and your own map & token images
+play/assets/
+play/battle_map.html
+play/battle_map.js

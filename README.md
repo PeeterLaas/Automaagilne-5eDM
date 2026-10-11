@@ -93,6 +93,9 @@ Works with **free OpenRouter models** and **local Ollama models** through [Pi](h
 See **[docs/PLAYING.md](docs/PLAYING.md)** for setup, free-tier limits and model tips
 (Estonian student quick-start: [docs/ALUSTAMINE.md](docs/ALUSTAMINE.md)).
 
+**🗺️ Battle map:** a live browser map that follows the combat tracker, with your own map images and
+monster tokens. See [docs/BATTLE_MAP.md](docs/BATTLE_MAP.md).
+
 ## 🚀 Quick Start (1 Command — Hermes Profile Distribution)
 
 ### Prerequisites

@@ -73,6 +73,19 @@ keeles, milles sina kirjutad.
 
 ---
 
+### 🗺️ Lahingukaart
+
+Ava lahingukaart brauseris (kaustas `play/`):
+
+```bash
+python3 ../scripts/battle_map.py open
+```
+
+Kui algab lahing, paigutab DM tegelased ja vaenlased ruudustikule (näiteks C3, H6) ning liigutab
+neid. Kaart uueneb ise. Klõpsa tegelasel ja vii hiir mõnele ruudule, siis näed kaugust jalgades
+(üks ruut = 5 jalga). Oma kaardipildid ja märgid saad lisada kausta `play/assets/`. Täpsem juhend on
+failis [`BATTLE_MAP.md`](BATTLE_MAP.md).
+
 ## Mida teada tasuta mudelitest
 
 - **Päevas on 50 päringut.** Iga tööriista kasutus (täringuveeretus, faili lugemine) on eraldi

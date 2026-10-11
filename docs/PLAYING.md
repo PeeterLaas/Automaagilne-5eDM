@@ -95,6 +95,11 @@ Small local models follow the rules less reliably than large cloud models. They 
 or to save. If that happens, remind the DM (*"roll for it"*, *"save the game"*). A good classroom
 exercise is to compare how models of different sizes handle the same `AGENTS.md`.
 
+## Battle map (any agent)
+
+`python3 ../scripts/battle_map.py open` opens a live battle map in your browser, and the DM moves
+the tokens. See [BATTLE_MAP.md](BATTLE_MAP.md).
+
 ---
 
 ## Claude Code
