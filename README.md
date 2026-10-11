@@ -79,6 +79,19 @@ Whether you're a solo player exploring the Sword Coast or a group venturing thro
    🎯 Goblin2's turn! What do they do?
 ```
 
+## 🤖 Play With Any Agent (Pi, Claude Code, Gemini CLI, …)
+
+No Hermes or Docker needed: just Python 3.10+ and a coding agent. The DM instructions live in
+[`play/AGENTS.md`](play/AGENTS.md), and your saves go to `play/campaigns/`.
+
+```bash
+cd play
+pi                                             # or: claude / gemini / codex / opencode
+```
+
+Works with **free OpenRouter models** and **local Ollama models** through [Pi](https://pi.dev).
+See **[docs/PLAYING.md](docs/PLAYING.md)** for setup, free-tier limits and model tips.
+
 ## 🚀 Quick Start (1 Command — Hermes Profile Distribution)
 
 ### Prerequisites

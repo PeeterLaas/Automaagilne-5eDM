@@ -10,9 +10,9 @@ This script is a backend helper the DM can use AFTER the conversation
 to write the final character sheet to markdown.
 
 Usage (DM only, after roleplay):
-    python3 /opt/data/scripts/character_creator.py create --name "Rowan" --race "Human" --class "Fighter" --method roll
-    python3 /opt/data/scripts/character_creator.py list --campaign <id>
-    python3 /opt/data/scripts/character_creator.py show --campaign <id> --name "Rowan"
+    python3 scripts/character_creator.py create --name "Rowan" --race "Human" --class "Fighter" --method roll
+    python3 scripts/character_creator.py list --campaign <id>
+    python3 scripts/character_creator.py show --campaign <id> --name "Rowan"
 
 Methods:
     roll     → 4d6 drop lowest, 6 times (DM rolls for player during conversation)
@@ -27,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-DEFAULT_DATA_DIR = Path("/opt/data")
+from dnd_paths import DATA_DIR as DEFAULT_DATA_DIR
 CAMPAIGNS_DIR = DEFAULT_DATA_DIR / "campaigns"
 
 RACES = {

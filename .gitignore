@@ -29,3 +29,14 @@ campaign_backups/
 campaigns/*.json
 campaigns_data/*.json
 campaign_state.json
+
+# Local play data (play/ is the game table for Pi, Claude Code, Gemini CLI, ...)
+play/campaigns/
+play/campaign_backups/
+play/active_campaign
+play/combat_state.json
+play/campaign_state.json
+play/resumen-rapido.md
+
+# Python
+__pycache__/

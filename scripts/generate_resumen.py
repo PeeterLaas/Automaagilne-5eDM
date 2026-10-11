@@ -11,7 +11,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-DEFAULT_DATA_DIR = Path("/opt/data")
+from dnd_paths import DATA_DIR as DEFAULT_DATA_DIR
 
 
 def get_paths(data_dir: Path | None = None):

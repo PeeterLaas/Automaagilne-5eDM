@@ -7,13 +7,13 @@ in the middle of a fight. Hermes context compression is the enemy of combat;
 this file is the shield.
 
 Usage inside container:
-    python3 /opt/data/scripts/combat_tracker.py init --party "Elara,Maya" --enemies "Goblin1:7:15,Goblin2:7:15"
-    python3 /opt/data/scripts/combat_tracker.py status
-    python3 /opt/data/scripts/combat_tracker.py next
-    python3 /opt/data/scripts/combat_tracker.py damage Goblin1 9
-    python3 /opt/data/scripts/combat_tracker.py heal Elara 5
-    python3 /opt/data/scripts/combat_tracker.py condition Goblin1 add poisoned
-    python3 /opt/data/scripts/combat_tracker.py end
+    python3 scripts/combat_tracker.py init --party "Elara,Maya" --enemies "Goblin1:7:15,Goblin2:7:15"
+    python3 scripts/combat_tracker.py status
+    python3 scripts/combat_tracker.py next
+    python3 scripts/combat_tracker.py damage Goblin1 9
+    python3 scripts/combat_tracker.py heal Elara 5
+    python3 scripts/combat_tracker.py condition Goblin1 add poisoned
+    python3 scripts/combat_tracker.py end
 
 Usage outside container (testing):
     python3 scripts/combat_tracker.py --data-dir ./test-data status
@@ -26,7 +26,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-DEFAULT_DATA_DIR = Path("/opt/data")
+from dnd_paths import DATA_DIR as DEFAULT_DATA_DIR
 
 
 def get_paths(data_dir: Path | None = None):

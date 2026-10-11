@@ -13,7 +13,7 @@ Telegram sessions older than a few hours, keeping only the most recent
 session for short-term context.
 
 Usage:
-    python3 /opt/data/scripts/session_cleaner.py
+    python3 scripts/session_cleaner.py
 """
 
 import sqlite3
@@ -21,7 +21,9 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-DEFAULT_DB = Path("/opt/data/state.db")
+from dnd_paths import DATA_DIR
+
+DEFAULT_DB = DATA_DIR / "state.db"
 MAX_AGE_HOURS = 6  # Keep sessions from last 6 hours
 
 

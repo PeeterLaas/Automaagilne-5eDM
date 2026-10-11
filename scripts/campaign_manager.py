@@ -8,11 +8,11 @@ Inspired by claude-dungeon-master. Each campaign is a folder:
     characters/       — Individual character sheets
 
 Usage:
-    python3 /opt/data/scripts/campaign_manager.py list
-    python3 /opt/data/scripts/campaign_manager.py status
-    python3 /opt/data/scripts/campaign_manager.py save [label]
-    python3 /opt/data/scripts/campaign_manager.py switch <id>
-    python3 /opt/data/scripts/campaign_manager.py new <id> '<title>'
+    python3 scripts/campaign_manager.py list
+    python3 scripts/campaign_manager.py status
+    python3 scripts/campaign_manager.py save [label]
+    python3 scripts/campaign_manager.py switch <id>
+    python3 scripts/campaign_manager.py new <id> '<title>'
 """
 
 import argparse
@@ -22,7 +22,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-DEFAULT_DATA_DIR = Path("/opt/data")
+from dnd_paths import DATA_DIR as DEFAULT_DATA_DIR
 CAMPAIGNS_DIR = DEFAULT_DATA_DIR / "campaigns"
 BACKUP_DIR = DEFAULT_DATA_DIR / "campaign_backups"
 ACTIVE_FILE = DEFAULT_DATA_DIR / "active_campaign"

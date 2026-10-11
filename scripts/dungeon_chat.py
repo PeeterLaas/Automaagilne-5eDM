@@ -10,7 +10,7 @@ The DM calls this script when the player says things like:
   "Crear personaje: Rowan el Guerrero"
 
 Usage (called by DM):
-    python3 /opt/data/scripts/dungeon_chat.py parse "mensaje del jugador"
+    python3 scripts/dungeon_chat.py parse "mensaje del jugador"
 
 Returns a single-line instruction that the DM should echo to the player.
 """
@@ -21,7 +21,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-DEFAULT_DATA_DIR = Path("/opt/data")
+from dnd_paths import DATA_DIR as DEFAULT_DATA_DIR, SCRIPTS_DIR
 
 # ── Intent patterns (Spanish + English) ───────────────────────────────────────
 
@@ -82,7 +82,7 @@ def _run_manager(cmd: str) -> str:
     """Run campaign_manager.py and return stdout."""
     try:
         result = subprocess.run(
-            ["python3", str(DEFAULT_DATA_DIR / "scripts/campaign_manager.py")] + cmd.split(),
+            [sys.executable, str(SCRIPTS_DIR / "campaign_manager.py")] + cmd.split(),
             capture_output=True,
             text=True,
             timeout=10,
@@ -96,7 +96,7 @@ def _run_manager_args(args_list: list) -> str:
     """Run campaign_manager.py with argument list."""
     try:
         result = subprocess.run(
-            ["python3", str(DEFAULT_DATA_DIR / "scripts/campaign_manager.py")] + args_list,
+            [sys.executable, str(SCRIPTS_DIR / "campaign_manager.py")] + args_list,
             capture_output=True,
             text=True,
             timeout=10,

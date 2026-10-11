@@ -7,14 +7,14 @@ Supports: advantage, disadvantage, crits, skill checks, attacks, saves,
 and beautiful output for the DM to narrate.
 
 Usage inside container:
-    python3 /opt/data/scripts/roll.py 1d20+5
-    python3 /opt/data/scripts/roll.py attack --bonus 5 --ac 15 --damage 1d8+3
-    python3 /opt/data/scripts/roll.py save --ability dex --bonus 3 --dc 14
-    python3 /opt/data/scripts/roll.py skill --ability cha --bonus 4 --dc 12
-    python3 /opt/data/scripts/roll.py initiative --names "Elara,Goblin1,Goblin2"
-    python3 /opt/data/scripts/roll.py 4d6kh3  # roll 4d6 keep highest 3
-    python3 /opt/data/scripts/roll.py 2d20kh1+5  # advantage
-    python3 /opt/data/scripts/roll.py 2d20kl1+5  # disadvantage
+    python3 scripts/roll.py 1d20+5
+    python3 scripts/roll.py attack --bonus 5 --ac 15 --damage 1d8+3
+    python3 scripts/roll.py save --ability dex --bonus 3 --dc 14
+    python3 scripts/roll.py skill --ability cha --bonus 4 --dc 12
+    python3 scripts/roll.py initiative --names "Elara,Goblin1,Goblin2"
+    python3 scripts/roll.py 4d6kh3  # roll 4d6 keep highest 3
+    python3 scripts/roll.py 2d20kh1+5  # advantage
+    python3 scripts/roll.py 2d20kl1+5  # disadvantage
 """
 
 import argparse
